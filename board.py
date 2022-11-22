@@ -19,7 +19,8 @@ class Board(QFrame):  # base the board on a QFrame widget
 
         self.timer = QBasicTimer()  # create a timer for the game
         self.is_started = False  # game is not currently started
-        self.board_array = []  # TODO - create a 2d int/Piece array to store the state of the game
+
+        self.board_array = [[0] * Board.board_height] * Board.board_width
 
         self.init_board()
 
