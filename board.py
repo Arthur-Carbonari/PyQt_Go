@@ -44,12 +44,12 @@ class Board(QFrame):  # base the board on a QFrame widget
     def square_width(self):
         """returns the width of one square in the board"""
 
-        return self.contentsRect().width() / self.board_width
+        return int(self.contentsRect().width() / self.board_width)
 
     def square_height(self):
         """returns the height of one square of the board"""
 
-        return self.contentsRect().height() / self.board_height
+        return int(self.contentsRect().height() / self.board_height)
 
     def start(self):
         """starts game"""
@@ -71,21 +71,39 @@ class Board(QFrame):  # base the board on a QFrame widget
     def draw_board_squares(self, painter: QPainter):
         """draw all the square on the board"""
 
-        # TODO set the default colour of the brush
+        # set the default colour of the brush
+        # painter.setPen(Qt.GlobalColor.black)
+        # No need to do this since fill rect takes a QColor as parameter - Arthur
+
+        colors = [Qt.GlobalColor.black, Qt.GlobalColor.white]
+        current_index = 0
+
+        square_color = colors[current_index]
+
+        square_width = self.square_width()
+        square_height = self.square_height()
+
         for row in range(0, Board.board_height):
             for col in range(0, Board.board_width):
                 painter.save()
 
-                # TODO set this value equal the transformation in the column direction
-                col_transformation = self.square_width() * col
+                # Set this value equal the transformation in the column direction
+                col_transformation = square_width * col
 
-                # TODO set this value equal the transformation in the row direction
-                row_transformation = 0
+                # Set this value equal the transformation in the row direction
+                row_transformation = square_height * row
 
-                painter.translate(col_transformation, row_transformation)
-                painter.fillRect()  # TODO provide the required arguments
+                # painter.translate(col_transformation, row_transformation)
+                # I commented this line of code off, im not sure why it was here since this makes so that the code given
+                # not work, if u think can think of a reason tell me - Arthur
+
+                painter.fillRect(col_transformation, row_transformation, square_width, square_height, square_color)
+
                 painter.restore()
-                # TODO change the colour of the brush so that a checkered board is drawn
+
+                # Change the colour of the brush so that a checkered board is drawn
+                current_index ^= 1  # This is the bitwise operator XOR, makes so that the value toggles between 0 and 1
+                square_color = colors[current_index]
 
     def draw_pieces(self, painter: QPainter):
         """draw the prices on the board"""
@@ -124,8 +142,8 @@ class Board(QFrame):  # base the board on a QFrame widget
     def paintEvent(self, event):
         """paints the board and the pieces of the game"""
 
-        # painter = QPainter(self)
-        # self.drawBoardSquares(painter)
+        painter = QPainter(self)
+        self.draw_board_squares(painter)
         # self.drawPieces(painter)
 
     def mousePressEvent(self, event):
