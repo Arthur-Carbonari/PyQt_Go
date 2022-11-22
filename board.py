@@ -20,6 +20,7 @@ class Board(QFrame):  # base the board on a QFrame widget
         self.timer = QBasicTimer()  # create a timer for the game
         self.is_started = False  # game is not currently started
 
+        # Create a 2d int[7][7] array to store the current state of the game
         self.board_array = [[0] * Board.board_height] * Board.board_width
 
         self.init_board()
@@ -29,10 +30,10 @@ class Board(QFrame):  # base the board on a QFrame widget
 
         self.start()  # start the game which will start the timer
 
-        # self.printBoardArray()    # TODO - uncomment this method after creating the array above
+        self.print_board_array()
 
     def print_board_array(self):
-        """prints the board_array in an attractive way"""
+        """prints the board_array to the terminal in an attractive way"""
 
         print("board_array:")
         print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in self.board_array]))
