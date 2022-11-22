@@ -3,23 +3,22 @@ class Piece(object):
     NoPiece = 0
     White = 1
     Black = 2
-    Status = 0 #default to nopiece
-    liberties = 0 #default no liberties
+    Status = 0  # default to no piece
+    liberties = 0  # default no liberties
     x = -1
-    y= -1
+    y = -1
 
-    def __init__(self, Piece,x,y):  #constructor
-        self.Status = Piece
+    def __init__(self, piece, x, y):  # constructor
+        self.Status = piece
         self.liberties = 0
         self.x = x
         self.y = y
 
-    def getPiece(self): # return PieceType
+    def get_piece(self):  # return PieceType
         return self.Status
 
-    def getLiberties(self): # return Liberties
-        self.libs = self.liberties
-        return self.libs
+    def get_liberties(self):  # return Liberties
+        return self.liberties
 
-    def setLiberties(self,liberties): # set Liberties
+    def set_liberties(self, liberties):  # set Liberties
         self.liberties = liberties

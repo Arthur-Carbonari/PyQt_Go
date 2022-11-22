@@ -3,25 +3,29 @@ from PyQt6.QtCore import Qt
 from board import Board
 from score_board import ScoreBoard
 
+
 class Go(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        self.initUI()
 
-    def getBoard(self):
+        self.board = Board(self)
+        self.score_board = ScoreBoard()
+
+        self.init_ui()
+
+    def get_board(self):
         return self.board
 
-    def getScoreBoard(self):
-        return self.scoreBoard
+    def get_score_board(self):
+        return self.score_board
 
-    def initUI(self):
-        '''initiates application UI'''
-        self.board = Board(self)
+    def init_ui(self):
+        """initiates application UI"""
+
         self.setCentralWidget(self.board)
-        self.scoreBoard = ScoreBoard()
-        self.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.scoreBoard)
-        self.scoreBoard.make_connection(self.board)
+        self.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.score_board)
+        self.score_board.make_connection(self.board)
 
         self.resize(800, 800)
         self.center()
@@ -29,11 +33,11 @@ class Go(QMainWindow):
         self.show()
 
     def center(self):
-        '''centers the window on the screen'''
+        """centers the window on the screen"""
         gr = self.frameGeometry()
         screen = self.screen().availableGeometry().center()
 
         gr.moveCenter(screen)
         self.move(gr.topLeft())
-        #size = self.geometry()
-        #self.move((screen.width() - size.width()) / 2,(screen.height() - size.height()) / 2)
+        # size = self.geometry()
+        # self.move((screen.width() - size.width()) / 2,(screen.height() - size.height()) / 2)
