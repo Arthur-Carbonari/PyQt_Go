@@ -3,7 +3,7 @@ from PyQt6.QtCore import pyqtSlot
 
 
 class ScoreBoard(QLabel):
-    """ base the score_board on a QDockWidget"""
+    """ base the score_board on a QLabel"""
 
     def __init__(self):
         super().__init__()
