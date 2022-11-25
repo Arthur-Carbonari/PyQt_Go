@@ -125,6 +125,13 @@ class Board(QFrame):  # base the board on a QFrame widget
 
     # EVENTS ===========================================
 
+    def resizeEvent(self, event):
+
+        # This makes so that the board is always square, since most monitors are larger horizontally, it limits the
+        # board size by height.
+        self.setMinimumWidth(self.height())
+        self.setMaximumWidth(self.height())
+
     def timerEvent(self, event):
         """this event is automatically called when the timer is updated. based on the timer_speed variable """
 
