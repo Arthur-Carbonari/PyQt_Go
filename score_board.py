@@ -1,16 +1,12 @@
-from PyQt6.QtWidgets import QDockWidget, QVBoxLayout, QWidget, QLabel
+from PyQt6.QtWidgets import QVBoxLayout, QWidget, QLabel
 from PyQt6.QtCore import pyqtSlot
 
 
-class ScoreBoard(QDockWidget):
+class ScoreBoard(QLabel):
     """ base the score_board on a QDockWidget"""
 
     def __init__(self):
         super().__init__()
-
-        # create a widget to hold other widgets
-        self.mainWidget = QWidget()
-        self.mainLayout = QVBoxLayout()
 
         # create two labels which will be updated by signals
         self.label_clickLocation = QLabel("Click Location: ")
@@ -21,13 +17,15 @@ class ScoreBoard(QDockWidget):
     def init_ui(self):
         """initiates ScoreBoard UI"""
 
+        # create a widget to hold other widgets
+        mainLayout = QVBoxLayout(self)
+        mainLayout.addWidget(self.label_clickLocation)
+        mainLayout.addWidget(self.label_timeRemaining)
+
         self.resize(200, 200)
         self.center()
         self.setWindowTitle('ScoreBoard')
-        self.mainWidget.setLayout(self.mainLayout)
-        self.mainLayout.addWidget(self.label_clickLocation)
-        self.mainLayout.addWidget(self.label_timeRemaining)
-        self.setWidget(self.mainWidget)
+
         self.show()
 
     def center(self):
