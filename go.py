@@ -1,4 +1,3 @@
-from PyQt6.QtCore import QPoint
 from PyQt6.QtWidgets import QMainWindow, QWidget, QHBoxLayout
 from board import Board
 from score_board import ScoreBoard
@@ -39,13 +38,3 @@ class Go(QMainWindow):
 
         self.setWindowTitle('Go')
         self.show()
-
-    def center(self):
-        """centers the window on the screen"""
-        gr = self.frameGeometry()
-        screen = self.screen().availableGeometry()
-
-        gr.moveCenter(screen.center())
-        self.move(gr.topLeft())
-        size = self.geometry()
-        self.move(QPoint(int(screen.width() - size.width() / 2), int((screen.height() - size.height()) / 2)))
