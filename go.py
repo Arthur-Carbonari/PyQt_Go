@@ -1,5 +1,4 @@
-from PyQt6.QtWidgets import QMainWindow
-from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QMainWindow, QWidget, QHBoxLayout
 from board import Board
 from score_board import ScoreBoard
 
@@ -23,8 +22,13 @@ class Go(QMainWindow):
     def init_ui(self):
         """initiates application UI"""
 
-        self.setCentralWidget(self.board)
-        self.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.score_board)
+        main_widget = QWidget()
+        self.setCentralWidget(main_widget)
+
+        main_layout = QHBoxLayout(main_widget)
+        main_layout.addWidget(self.board, 9)
+        main_layout.addWidget(self.score_board, 2)
+
         self.score_board.make_connection(self.board)
 
         self.resize(800, 800)
