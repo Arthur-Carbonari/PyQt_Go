@@ -142,6 +142,10 @@ class Board(QFrame):  # base the board on a QFrame widget
         self.setMinimumWidth(self.height())
         self.setMaximumWidth(self.height())
 
+        # Update the margin of the layout so that the pieces are always at the intersection of the board squares
+        space = int(self.square_width() / 2)
+        self.pieces_layout.setContentsMargins(space, space, space, space)
+
     def timerEvent(self, event):
         """this event is automatically called when the timer is updated. based on the timer_speed variable """
 
