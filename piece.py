@@ -17,8 +17,11 @@ class Piece(QPushButton):
         super().__init__()
         # self.Status = piece
 
-    def __init__(self, piece, x, y):  # constructor
-        self.Status = piece
+        self.setStyleSheet("""
+                        border-radius: 50px;
+                        """)
+        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+
         self.liberties = 0
         self.row = row
         self.column = column
