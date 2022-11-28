@@ -1,8 +1,8 @@
-from PyQt6.QtWidgets import QFrame
+from PyQt6.QtWidgets import QFrame, QGridLayout
 from PyQt6.QtCore import Qt, QBasicTimer, pyqtSignal, QPointF
 from PyQt6.QtGui import QPainter
 # from PyQt6.QtTest import QTest
-# from piece import Piece
+from piece import Piece
 
 
 class Board(QFrame):  # base the board on a QFrame widget
@@ -22,6 +22,16 @@ class Board(QFrame):  # base the board on a QFrame widget
 
         # Create a 2d int[7][7] array to store the current state of the game
         self.board_array = [[0] * Board.board_height] * Board.board_width
+
+        # Create a layout for the board that will contain the Pieces objects
+        self.pieces_layout = QGridLayout(self)
+        self.pieces_layout.setSpacing(0)
+
+        # Populate the layout with pieces
+        for row in range(Board.board_height - 1):
+            for column in range(Board.board_width - 1):
+                piece = Piece(row, column)
+                self.pieces_layout.addWidget(piece, row, column)
 
         self.init_board()
 
