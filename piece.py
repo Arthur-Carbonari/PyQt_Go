@@ -1,5 +1,10 @@
 # TODO: Add more functions as needed for your Pieces
-class Piece(object):
+from PyQt6.QtCore import QSize
+from PyQt6.QtGui import QIcon
+from PyQt6.QtWidgets import QPushButton, QSizePolicy
+
+
+class Piece(QPushButton):
     NoPiece = 0
     White = 1
     Black = 2
