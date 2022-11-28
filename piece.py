@@ -49,3 +49,9 @@ class Piece(QPushButton):
 
     def set_liberties(self, liberties):  # set Liberties
         self.liberties = liberties
+
+    # EVENTS =====================================
+
+    def resizeEvent(self, event):
+        self.setIconSize(QSize(self.height(), self.width()))
+
