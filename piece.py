@@ -26,6 +26,20 @@ class Piece(QPushButton):
         self.row = row
         self.column = column
 
+        self.clicked.connect(self.place_piece())
+
+    def place_piece(self):
+
+        # Works but still has some quirks that needs fixing, like fix icon size after resizing board
+        # self.setMaximumWidth(self.width())
+        # self.setMaximumHeight(self.height())
+        # self.setIconSize(QSize(self.height(), self.width()))
+        # self.setIcon(QIcon("icons/player_1_piece.png"))
+
+        self.setStyleSheet("""
+                    border-radius: 50px;
+                    background: red;
+        """)
 
     def get_piece(self):  # return PieceType
         return self.Status
