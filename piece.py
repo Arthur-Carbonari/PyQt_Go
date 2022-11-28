@@ -10,14 +10,19 @@ class Piece(QPushButton):
     Black = 2
     Status = 0  # default to no piece
     liberties = 0  # default no liberties
-    x = -1
-    y = -1
+    row = -1
+    column = -1
+
+    def __init__(self, row, column):  # constructor
+        super().__init__()
+        # self.Status = piece
 
     def __init__(self, piece, x, y):  # constructor
         self.Status = piece
         self.liberties = 0
-        self.x = x
-        self.y = y
+        self.row = row
+        self.column = column
+
 
     def get_piece(self):  # return PieceType
         return self.Status
