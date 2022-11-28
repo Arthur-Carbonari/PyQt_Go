@@ -26,7 +26,7 @@ class Piece(QPushButton):
         self.row = row
         self.column = column
 
-        self.clicked.connect(self.place_piece())
+        self.clicked.connect(self.place_piece)
 
     def place_piece(self):
 
