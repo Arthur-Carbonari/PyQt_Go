@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QFrame, QGridLayout
-from PyQt6.QtCore import Qt, QBasicTimer, pyqtSignal, QPointF
-from PyQt6.QtGui import QPainter
+from PyQt6.QtCore import Qt, QBasicTimer, pyqtSignal, QPointF, QPoint
+from PyQt6.QtGui import QPainter, QPen, QPixmap
 # from PyQt6.QtTest import QTest
 from piece import Piece
 
@@ -32,8 +32,8 @@ class Board(QFrame):  # base the board on a QFrame widget
         self.background = QPixmap(Board.background_path)
 
         # Populate the layout with pieces
-        for row in range(Board.board_height - 1):
-            for column in range(Board.board_width - 1):
+        for row in range(Board.board_height):
+            for column in range(Board.board_width):
                 piece = Piece(row, column)
                 self.pieces_layout.addWidget(piece, row, column)
 
@@ -58,12 +58,12 @@ class Board(QFrame):  # base the board on a QFrame widget
     def square_width(self):
         """returns the width of one square in the board"""
 
-        return int(self.contentsRect().width() / self.board_width)
+        return int(self.contentsRect().width() / (self.board_width + 1))
 
     def square_height(self):
         """returns the height of one square of the board"""
 
-        return int(self.contentsRect().height() / self.board_height)
+        return int(self.contentsRect().height() / (self.board_height + 1))
 
     def start(self):
         """starts game"""
@@ -132,8 +132,10 @@ class Board(QFrame):  # base the board on a QFrame widget
         self.setFixedWidth(self.height())
 
         # Update the margin of the layout so that the pieces are always at the intersection of the board squares
-        space = int(self.square_width() / 2)
-        self.pieces_layout.setContentsMargins(space, space, space, space)
+        space = int(self.square_width() * 0.5)
+        end_space = int(self.width() - space - self.square_width() * Board.board_width)
+
+        self.pieces_layout.setContentsMargins(space, space, end_space, end_space)
 
     def timerEvent(self, event):
         """this event is automatically called when the timer is updated. based on the timer_speed variable """
