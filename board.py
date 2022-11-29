@@ -9,8 +9,8 @@ class Board(QFrame):  # base the board on a QFrame widget
     update_timer_signal = pyqtSignal(int)  # signal sent when timer is updated
     click_location_signal = pyqtSignal(str)  # signal sent when there is a new click location
 
-    board_width = 7  # board is 7 squares wide
-    board_height = 7  #
+    board_size = 7  # board is 7x7 squares wide
+
     timer_speed = 1000  # the timer updates every 1 second
     counter = 10  # the number the counter will count down from
 
@@ -23,7 +23,7 @@ class Board(QFrame):  # base the board on a QFrame widget
         self.is_started = False  # game is not currently started
 
         # Create a 2d int[7][7] array to store the current state of the game
-        self.board_array = [[0] * Board.board_height] * Board.board_width
+        self.board_array = [[0] * Board.board_size] * Board.board_size
 
         # Create a layout for the board that will contain the Pieces objects
         self.pieces_layout = QGridLayout(self)
@@ -32,8 +32,8 @@ class Board(QFrame):  # base the board on a QFrame widget
         self.background = QPixmap(Board.background_path)
 
         # Populate the layout with pieces
-        for row in range(Board.board_height):
-            for column in range(Board.board_width):
+        for row in range(Board.board_size):
+            for column in range(Board.board_size):
                 piece = Piece(row, column)
                 self.pieces_layout.addWidget(piece, row, column)
 
@@ -55,15 +55,10 @@ class Board(QFrame):  # base the board on a QFrame widget
     def mouse_pos_to_col_row(self, event):
         """convert the mouse click event to a row and column"""
 
-    def square_width(self):
-        """returns the width of one square in the board"""
+    def square_size(self):
+        """returns the side size of one square in the board"""
 
-        return int(self.contentsRect().width() / (self.board_width + 1))
-
-    def square_height(self):
-        """returns the height of one square of the board"""
-
-        return int(self.contentsRect().height() / (self.board_height + 1))
+        return int(self.contentsRect().width() / (Board.board_size + 1))
 
     def start(self):
         """starts game"""
@@ -88,14 +83,13 @@ class Board(QFrame):  # base the board on a QFrame widget
         # set the default colour of the brush
         painter.setPen(QPen(Qt.GlobalColor.black, 3))
 
-        square_width = self.square_width()
-        square_height = self.square_height()
+        square_width = self.square_size()
 
         board_start = square_width
-        board_end = square_width * Board.board_width
+        board_end = square_width * Board.board_size
         xy_position: int
 
-        for i in range(1, Board.board_height + 1):
+        for i in range(1, Board.board_size + 1):
 
             xy_position = square_width * i
 
@@ -118,7 +112,7 @@ class Board(QFrame):  # base the board on a QFrame widget
 
                 # TODO draw some the pieces as ellipses
                 # TODO choose your colour and set the painter brush to the correct colour
-                radius = self.square_width() / 4
+                radius = self.square_size() / 4
                 center = QPointF(radius, radius)
                 painter.drawEllipse(center, radius, radius)
                 painter.restore()
@@ -132,8 +126,8 @@ class Board(QFrame):  # base the board on a QFrame widget
         self.setFixedWidth(self.height())
 
         # Update the margin of the layout so that the pieces are always at the intersection of the board squares
-        space = int(self.square_width() * 0.5)
-        end_space = int(self.width() - space - self.square_width() * Board.board_width)
+        space = int(self.square_size() * 0.5)
+        end_space = int(self.width() - space - Board.board_size * self.square_size())
 
         self.pieces_layout.setContentsMargins(space, space, end_space, end_space)
 
