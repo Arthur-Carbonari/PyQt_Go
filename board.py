@@ -86,38 +86,24 @@ class Board(QFrame):  # base the board on a QFrame widget
         """draw all the square on the board"""
 
         # set the default colour of the brush
-        # painter.setPen(Qt.GlobalColor.black)
-        # No need to do this since fill rect takes a QColor as parameter - Arthur
-
-        colors = [Qt.GlobalColor.black, Qt.GlobalColor.white]
-        current_index = 0
-
-        square_color = colors[current_index]
+        painter.setPen(QPen(Qt.GlobalColor.black, 3))
 
         square_width = self.square_width()
         square_height = self.square_height()
 
-        for row in range(0, Board.board_height):
-            for col in range(0, Board.board_width):
-                painter.save()
+        board_start = square_width
+        board_end = square_width * Board.board_width
+        xy_position: int
 
-                # Set this value equal the transformation in the column direction
-                col_transformation = square_width * col
+        for i in range(1, Board.board_height + 1):
 
-                # Set this value equal the transformation in the row direction
-                row_transformation = square_height * row
+            xy_position = square_width * i
 
-                # painter.translate(col_transformation, row_transformation)
-                # I commented this line of code off, im not sure why it was here since this makes so that the code given
-                # not work, if u think can think of a reason tell me - Arthur
+            # draws the rows
+            painter.drawLine(board_start, xy_position, board_end, xy_position)
 
-                painter.fillRect(col_transformation, row_transformation, square_width, square_height, square_color)
-
-                painter.restore()
-
-                # Change the colour of the brush so that a checkered board is drawn
-                current_index ^= 1  # This is the bitwise operator XOR, makes so that the value toggles between 0 and 1
-                square_color = colors[current_index]
+            # Draws the columns
+            painter.drawLine(xy_position, board_start, xy_position, board_end)
 
     def draw_pieces(self, painter: QPainter):
         """draw the prices on the board"""
