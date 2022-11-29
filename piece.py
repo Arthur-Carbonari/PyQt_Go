@@ -21,7 +21,7 @@ class Piece(QPushButton):
         super().__init__()
         # self.Status = piece
 
-        self.setStyleSheet("border-radius: 50px;")
+        self.setStyleSheet(f"border-radius: {self._get_border_radius()}%;")
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.setIcon(QIcon(Piece.no_piece_icon_path))
 
@@ -36,9 +36,9 @@ class Piece(QPushButton):
         # Works but still has some quirks that needs fixing, like fix icon size after resizing board
         self.setIcon(QIcon(Piece.p1_piece_icon_path))
 
-        self.setStyleSheet("""
-                    border-radius: 50px;
-                    background: red;
+        self.setStyleSheet(f"""
+                    border-radius: {self._get_border_radius()}%;
+                    background: white;
         """)
 
     def get_piece(self):  # return PieceType
@@ -50,6 +50,13 @@ class Piece(QPushButton):
     def set_liberties(self, liberties):  # set Liberties
         self.liberties = liberties
 
+    def _get_border_radius(self):
+        """
+        This method calculates the maximum valid border radius for the current size of the piece
+        :return: maximum border radius value(float)
+        """
+
+        return self.height()/2 - 0.6
     # EVENTS =====================================
 
     def resizeEvent(self, event):
