@@ -143,8 +143,7 @@ class Board(QFrame):  # base the board on a QFrame widget
 
         # This makes so that the board is always square, since most monitors are larger horizontally, it limits the
         # board size by height.
-        self.setMinimumWidth(self.height())
-        self.setMaximumWidth(self.height())
+        self.setFixedWidth(self.height())
 
         # Update the margin of the layout so that the pieces are always at the intersection of the board squares
         space = int(self.square_width() / 2)
