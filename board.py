@@ -14,6 +14,8 @@ class Board(QFrame):  # base the board on a QFrame widget
     timer_speed = 1000  # the timer updates every 1 second
     counter = 10  # the number the counter will count down from
 
+    background_path = "./icons/board_background.jpg"
+
     def __init__(self, parent):
         super().__init__(parent)
 
@@ -26,6 +28,8 @@ class Board(QFrame):  # base the board on a QFrame widget
         # Create a layout for the board that will contain the Pieces objects
         self.pieces_layout = QGridLayout(self)
         self.pieces_layout.setSpacing(0)
+
+        self.background = QPixmap(Board.background_path)
 
         # Populate the layout with pieces
         for row in range(Board.board_height - 1):
@@ -164,8 +168,13 @@ class Board(QFrame):  # base the board on a QFrame widget
         """paints the board and the pieces of the game"""
 
         painter = QPainter(self)
+
+        # Draws the board background
+        self.background = self.background.scaled(self.width(), self.height())
+        painter.drawPixmap(QPoint(), self.background)
+
+        # Draws the board squares
         self.draw_board_squares(painter)
-        # self.drawPieces(painter)
 
     def mousePressEvent(self, event):
         """this event is automatically called when the mouse is pressed"""
