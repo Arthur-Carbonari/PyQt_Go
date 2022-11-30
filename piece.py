@@ -31,7 +31,7 @@ class Piece(QPushButton):
 
         self.liberties = 0
 
-        self.clicked.connect(self.place_piece)
+        self.clicked.connect(self.board.try_move(row, column))
 
     def place_piece(self):
 
