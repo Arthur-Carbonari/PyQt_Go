@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import QFrame, QGridLayout
-from PyQt6.QtCore import Qt, QBasicTimer, pyqtSignal, QPointF, QPoint
+from PyQt6.QtCore import Qt, QBasicTimer, pyqtSignal, QPoint
 from PyQt6.QtGui import QPainter, QPen, QPixmap
 # from PyQt6.QtTest import QTest
 from piece import Piece
@@ -120,24 +120,6 @@ class Board(QFrame):  # base the board on a QFrame widget
             # Draws the columns
             painter.drawLine(xy_position, board_start, xy_position, board_end)
 
-    def draw_pieces(self, painter: QPainter):
-        """draw the prices on the board"""
-
-        colour = Qt.GlobalColor.transparent  # empty square could be modeled with transparent pieces
-        painter.setPen(colour)
-
-        for row in range(0, len(self.board_array)):
-            for col in range(0, len(self.board_array[0])):
-                painter.save()
-                painter.translate()
-
-                # TODO draw some the pieces as ellipses
-                # TODO choose your colour and set the painter brush to the correct colour
-                radius = self.square_size() / 4
-                center = QPointF(radius, radius)
-                painter.drawEllipse(center, radius, radius)
-                painter.restore()
-
     # EVENTS ===========================================
 
     def resizeEvent(self, event):
@@ -177,12 +159,3 @@ class Board(QFrame):  # base the board on a QFrame widget
 
         # Draws the board squares
         self.draw_board_squares(painter)
-
-    def mousePressEvent(self, event):
-        """this event is automatically called when the mouse is pressed"""
-
-        click_loc = "click location [" + str(event.position().x()) + "," + str(
-            event.position().y()) + "]"  # the location where a mouse click was registered
-        print("mousePressEvent() - " + click_loc)
-        # TODO you could call some game logic here
-        self.click_location_signal.emit(click_loc)

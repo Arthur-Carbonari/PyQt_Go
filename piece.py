@@ -1,4 +1,3 @@
-# TODO: Add more functions as needed for your Pieces
 from PyQt6.QtCore import QSize
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QPushButton, QSizePolicy
