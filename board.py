@@ -24,6 +24,7 @@ class Board(QFrame):  # base the board on a QFrame widget
 
         # Create a 2d int[7][7] array to store the current state of the game
         self.board_array = [[0] * Board.board_size] * Board.board_size
+        self.pieces_array = []
 
         # Create a layout for the board that will contain the Pieces objects
         self.pieces_layout = QGridLayout(self)
@@ -33,9 +34,13 @@ class Board(QFrame):  # base the board on a QFrame widget
 
         # Populate the layout with pieces
         for row in range(Board.board_size):
+            piece_row = []
             for column in range(Board.board_size):
                 piece = Piece(self, row, column)
+                piece_row.append(piece)
                 self.pieces_layout.addWidget(piece, row, column)
+
+            self.pieces_array.append(piece_row)
 
         self.init_board()
 
