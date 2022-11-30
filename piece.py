@@ -23,7 +23,7 @@ class Piece(QPushButton):
 
     def __init__(self, board, row, column):  # constructor
         super().__init__()
-        # self.Status = piece
+        self.player = 0
 
         self.board = board
         self.row = row
@@ -52,6 +52,10 @@ class Piece(QPushButton):
                     background: {self.piece_colors[player]};
         """)
 
+        self.player = player
+
+        # TODO calculate liberty
+
     def get_piece(self):  # return PieceType
         return self.Status
 
@@ -73,3 +77,4 @@ class Piece(QPushButton):
     def resizeEvent(self, event):
         self.setIconSize(QSize(self.height(), self.width()))
 
+        #TODO update border-radius
