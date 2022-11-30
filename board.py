@@ -16,8 +16,10 @@ class Board(QFrame):  # base the board on a QFrame widget
 
     background_path = "./icons/board_background.jpg"
 
-    def __init__(self, parent):
-        super().__init__(parent)
+    def __init__(self, go):
+        super().__init__(go)
+
+        self.go = go
 
         self.timer = QBasicTimer()  # create a timer for the game
         self.is_started = False  # game is not currently started
