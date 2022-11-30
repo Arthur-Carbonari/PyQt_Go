@@ -1,3 +1,5 @@
+from itertools import cycle
+
 from PyQt6.QtWidgets import QMainWindow, QWidget, QHBoxLayout
 from board import Board
 from score_board import ScoreBoard
@@ -10,6 +12,8 @@ class Go(QMainWindow):
 
         self.board = Board(self)
         self.score_board = ScoreBoard()
+        self.turn_counter = cycle([1, 2])
+        self.current_player = next(self.turn_counter)
 
         self.init_ui()
 
@@ -38,3 +42,6 @@ class Go(QMainWindow):
 
         self.setWindowTitle('Go')
         self.show()
+
+    def next_turn(self):
+        self.current_player = next(self.turn_counter)
