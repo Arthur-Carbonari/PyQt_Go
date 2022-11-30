@@ -10,12 +10,16 @@ class Piece(QPushButton):
     Black = 2
     Status = 0  # default to no piece
     liberties = 0  # default no liberties
-    row = -1
-    column = -1
 
-    no_piece_icon_path = "./icons/empty.png"
-    p1_piece_icon_path = "icons/player_1_piece.png"
-    p2_piece_icon_path = ""
+    piece_colors = ["#0000",
+                    "#fff",
+                    "#000"
+                    ]
+
+    piece_icons_paths = ["./icons/empty.png",
+                         "icons/player_1_piece.png",
+                         "icons/player_2_piece.png"
+                         ]
 
     def __init__(self, board, row, column):  # constructor
         super().__init__()
@@ -27,7 +31,7 @@ class Piece(QPushButton):
 
         self.setStyleSheet(f"border-radius: {self._get_border_radius()}%;")
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        self.setIcon(QIcon(Piece.no_piece_icon_path))
+        self.setIcon(QIcon(Piece.piece_icons_paths[0]))
 
         self.liberties = 0
 
@@ -35,12 +39,13 @@ class Piece(QPushButton):
 
     def place_piece(self):
 
-        # Works but still has some quirks that needs fixing, like fix icon size after resizing board
-        self.setIcon(QIcon(Piece.p1_piece_icon_path))
+
+    def place_piece(self, player):
+        self.setIcon(QIcon(Piece.piece_icons_paths[player]))
 
         self.setStyleSheet(f"""
                     border-radius: {self._get_border_radius()}%;
-                    background: white;
+                    background: {self.piece_colors[player]};
         """)
 
     def get_piece(self):  # return PieceType
