@@ -35,10 +35,14 @@ class Piece(QPushButton):
 
         self.liberties = 0
 
-        self.clicked.connect(self.board.try_move(row, column))
+        self.clicked.connect(self.click_piece)
 
-    def place_piece(self):
+    def click_piece(self):
 
+        if self.player != 0:
+            return
+
+        self.board.try_move(self.row, self.column)
 
     def place_piece(self, player):
         self.setIcon(QIcon(Piece.piece_icons_paths[player]))
