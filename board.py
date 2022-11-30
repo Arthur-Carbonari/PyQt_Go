@@ -34,7 +34,7 @@ class Board(QFrame):  # base the board on a QFrame widget
         # Populate the layout with pieces
         for row in range(Board.board_size):
             for column in range(Board.board_size):
-                piece = Piece(row, column)
+                piece = Piece(self, row, column)
                 self.pieces_layout.addWidget(piece, row, column)
 
         self.init_board()
