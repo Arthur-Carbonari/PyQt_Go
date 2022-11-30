@@ -82,7 +82,21 @@ class Board(QFrame):  # base the board on a QFrame widget
         # TODO write code to reset game
 
     def try_move(self, new_x, new_y):
-        """tries to move a piece"""
+        """tries to place a piece"""
+
+        # TODO check if move is valid
+        if True:
+            # if move is valid: place piece
+            current_player = self.go.current_player
+            # change in board_array
+            self.board_array[new_x][new_y] = current_player
+            # change piece object
+            self.pieces_array[new_x][new_y].place_piece(current_player)
+
+            # TODO remove group with 0 liberties
+
+            # Go to next turn
+            self.go.next_turn()
 
     def draw_board_squares(self, painter: QPainter):
         """draw all the square on the board"""
