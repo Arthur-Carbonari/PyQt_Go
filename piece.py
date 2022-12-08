@@ -76,4 +76,7 @@ class Piece(QPushButton):
     def resizeEvent(self, event):
         self.setIconSize(QSize(self.height(), self.width()))
 
-        #TODO update border-radius
+        self.setStyleSheet(f"""
+                            border-radius: {self._get_border_radius()}%;
+                            background: {self.piece_colors[self.player]};
+                """)
