@@ -25,7 +25,7 @@ class Board(QFrame):  # base the board on a QFrame widget
         self.is_started = False  # game is not currently started
 
         # Create a 2d int[7][7] array to store the current state of the game
-        self.board_array = [[0] * Board.board_size] * Board.board_size
+        self.board_array = [[0 for i in range(Board.board_size)] for j in range(Board.board_size)]
         self.pieces_array = []
 
         # Create a layout for the board that will contain the Pieces objects
