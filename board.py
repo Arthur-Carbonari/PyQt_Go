@@ -44,6 +44,8 @@ class Board(QFrame):  # base the board on a QFrame widget
 
             self.pieces_array.append(piece_row)
 
+        [[piece.connect_to_adjacent() for piece in piece_row] for piece_row in self.pieces_array]
+
         self.init_board()
 
     def init_board(self):
