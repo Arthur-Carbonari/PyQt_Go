@@ -25,6 +25,7 @@ class Piece(QPushButton):
         self.player = 0
 
         self.board = board
+        self.adjacency_list = []
         self.row = row
         self.column = column
 
