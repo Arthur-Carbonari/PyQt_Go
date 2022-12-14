@@ -10,15 +10,9 @@ class Piece(QPushButton):
     Status = 0  # default to no piece
     liberties = 0  # default no liberties
 
-    piece_colors = ["#0000",
-                    "#fff",
-                    "#000"
-                    ]
+    piece_colors = ["#0000", "#fff", "#000"]
 
-    piece_icons_paths = ["./icons/empty.png",
-                         "icons/player_1_piece.png",
-                         "icons/player_2_piece.png"
-                         ]
+    piece_icons_paths = ["./icons/empty.png", "icons/player_1_piece.png", "icons/player_2_piece.png"]
 
     def __init__(self, board, row, column):  # constructor
         super().__init__()
@@ -38,7 +32,6 @@ class Piece(QPushButton):
         self.clicked.connect(self.click_piece)
 
     def click_piece(self):
-
         if self.player != 0:
             return
 
@@ -76,7 +69,8 @@ class Piece(QPushButton):
         :return: maximum border radius value(float)
         """
 
-        return self.height()/2 - 0.6
+        return self.height() / 2 - 0.6
+
     # EVENTS =====================================
 
     def resizeEvent(self, event):
