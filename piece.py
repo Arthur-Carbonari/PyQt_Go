@@ -94,6 +94,19 @@ class Piece(QPushButton):
 
         return group
 
+    def get_adjacent_enemies(self):
+
+        if self.player == 0:
+            raise Exception("This test_piece doesnt belong to any player")
+
+        adjacent_enemy_pieces = []
+
+        for adjacent_piece in self.adjacency_list:
+            if adjacent_piece.player != 0 and adjacent_piece.player != self.player:
+                adjacent_enemy_pieces.append(adjacent_piece)
+
+        return adjacent_enemy_pieces
+
     def _get_border_radius(self):
         """
         This method calculates the maximum valid border radius for the current size of the piece
