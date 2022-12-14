@@ -139,3 +139,11 @@ class Piece(QPushButton):
                             border-radius: {self._get_border_radius()}%;
                             background: {self.piece_colors[self.player]};
                 """)
+
+    # TO STRING METHODS ===========================
+
+    def __str__(self):
+        return f"(Player: '{self.player}', X: '{self.column}', Y: '{self.row}')"
+
+    def __repr__(self):
+        return f"(Player: '{self.player}', X: '{self.column}', Y: '{self.row}')"
