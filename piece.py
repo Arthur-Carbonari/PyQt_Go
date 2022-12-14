@@ -80,3 +80,14 @@ class Piece(QPushButton):
                             border-radius: {self._get_border_radius()}%;
                             background: {self.piece_colors[self.player]};
                 """)
+
+    def connect_to_adjacent(self):
+        self.adjacency_list = []
+
+        pieces_array = self.board.pieces_array
+        x, y = self.column, self.row
+
+        for (x0, y0) in ((x, y + 1), (x + 1, y), (x, y - 1), (x - 1, y)):
+
+            if 0 <= x0 < len(pieces_array) and 0 <= y0 < len(pieces_array):
+                self.adjacency_list.append(pieces_array[x0][y0])
