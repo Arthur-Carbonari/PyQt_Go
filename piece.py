@@ -61,6 +61,39 @@ class Piece(QPushButton):
 
         return liberty
 
+    def connect_to_adjacent(self):
+        self.adjacency_list = []
+
+        pieces_array = self.board.pieces_array
+        x, y = self.column, self.row
+
+        for (x0, y0) in ((x, y + 1), (x + 1, y), (x, y - 1), (x - 1, y)):
+            if 0 <= x0 < len(pieces_array) and 0 <= y0 < len(pieces_array):
+                self.adjacency_list.append(pieces_array[y0][x0])
+
+    def get_group(self):
+
+        if self.player == 0:
+            raise Exception("This test_piece doesnt belong to any player")
+
+        group: set[Piece] = set()
+
+        to_check = [self]
+        checked = set()
+
+        while to_check:
+            piece = to_check.pop()
+            group.add(piece)
+
+            adjacent_piece: Piece
+            for adjacent_piece in piece.adjacency_list:
+                if adjacent_piece.player == self.player and adjacent_piece not in checked:
+                    to_check.append(adjacent_piece)
+
+            checked.add(piece)
+
+        return group
+
     def _get_border_radius(self):
         """
         This method calculates the maximum valid border radius for the current size of the piece
@@ -78,14 +111,3 @@ class Piece(QPushButton):
                             border-radius: {self._get_border_radius()}%;
                             background: {self.piece_colors[self.player]};
                 """)
-
-    def connect_to_adjacent(self):
-        self.adjacency_list = []
-
-        pieces_array = self.board.pieces_array
-        x, y = self.column, self.row
-
-        for (x0, y0) in ((x, y + 1), (x + 1, y), (x, y - 1), (x - 1, y)):
-
-            if 0 <= x0 < len(pieces_array) and 0 <= y0 < len(pieces_array):
-                self.adjacency_list.append(pieces_array[x0][y0])
