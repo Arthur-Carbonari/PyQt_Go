@@ -8,7 +8,6 @@ class Piece(QPushButton):
     White = 1
     Black = 2
     Status = 0  # default to no piece
-    liberties = 0  # default no liberties
 
     piece_colors = ["#0000", "#fff", "#000"]
 
@@ -26,8 +25,6 @@ class Piece(QPushButton):
         self.setStyleSheet(f"border-radius: {self._get_border_radius()}%;")
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.setIcon(QIcon(Piece.piece_icons_paths[0]))
-
-        self.liberties = 0
 
         self.clicked.connect(self.click_piece)
 
@@ -47,8 +44,6 @@ class Piece(QPushButton):
 
         self.player = player
 
-        # TODO calculate liberty
-
     def reset_piece(self):
         self.player = 0
         self.setIcon(QIcon(Piece.piece_icons_paths[0]))
@@ -58,10 +53,13 @@ class Piece(QPushButton):
         return self.Status
 
     def get_liberties(self):  # return Liberties
-        return self.liberties
+        liberty = 0
 
-    def set_liberties(self, liberties):  # set Liberties
-        self.liberties = liberties
+        for adjacent_piece in self.adjacency_list:
+            if adjacent_piece.player == 0:
+                liberty += 1
+
+        return liberty
 
     def _get_border_radius(self):
         """
