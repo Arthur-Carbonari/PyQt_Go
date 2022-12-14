@@ -55,6 +55,11 @@ class Piece(QPushButton):
 
         # TODO calculate liberty
 
+    def reset_piece(self):
+        self.player = 0
+        self.setIcon(QIcon(Piece.piece_icons_paths[0]))
+        self.setStyleSheet(f"border-radius: {self._get_border_radius()}%;")
+
     def get_piece(self):  # return PieceType
         return self.Status
 
