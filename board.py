@@ -91,8 +91,62 @@ class Board(QFrame):  # base the board on a QFrame widget
 
         print("invalid")
 
-            # Go to next turn
-            self.go.next_turn()
+        # Go to next turn
+
+
+    def place_piece(self, x, y):
+        # change reference in board_array
+        self.board_array[x][y] = self.go.current_player
+
+        # place the piece
+        current_piece = self.pieces_array[x][y]
+        current_piece.place_piece(self.go.current_player)
+
+        # Get the surrounding pieces (up, right, down, left)
+        surrounding_pieces = self.game_logic.get_surrounding_pieces(x, y, self.pieces_array)
+
+        # Sets liberty to 0
+        current_piece.liberties = 0
+
+        # Updates the liberties for itself and all surrounding pieces
+        for surrounding_piece in surrounding_pieces:
+            # if the surrounding_piece is an empty piece
+            if surrounding_piece.player == 0:
+                current_piece.liberties += 1  # increase the new piece liberty by 1
+            else:
+                surrounding_piece.liberties -= 1  # otherwise decrease the surrounding piece liberty by 1
+
+        for surrounding_piece in surrounding_pieces:
+            if current_piece.player == surrounding_piece.player:
+                GameLogic.merge_pieces_groups(current_piece, surrounding_piece)
+
+        involved_groups = [current_piece.group]
+
+        for surrounding_piece in surrounding_pieces:
+            already_there = False
+
+            if surrounding_piece.player == 0:
+                continue
+
+            for group in involved_groups:
+                if surrounding_piece.group is group:
+                    already_there = True
+                    break
+
+            if not already_there:
+                involved_groups.append(surrounding_piece.group)
+
+        for group in involved_groups:
+            liberty = 0
+            for piece in group:
+                liberty = liberty + piece.liberties
+
+            if liberty == 0:
+                for piece in group:
+                    piece.reset_piece()
+
+        self.go.next_turn()
+        return
 
     def draw_board_squares(self, painter: QPainter):
         """draw all the square on the board"""
