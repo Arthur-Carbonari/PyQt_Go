@@ -118,61 +118,31 @@ class Board(QFrame):  # base the board on a QFrame widget
                 self.make_move(test_piece, adjacent_enemy_groups)
                 return
 
-        print("invalid")
+        # If its none of those cases the move is invalid
+        test_piece.player = 0  # we reset the piece player to 0 after testing
+        print("invalid move")  # warn the user the move is not valid
 
-        # Go to next turn
+    def make_move(self, piece, adjacent_enemy_groups=None):
+        # Places the test_piece in the board and updates the board array
+        self.place_piece(piece)
 
+        if adjacent_enemy_groups is None:
+            adjacent_enemy_groups = piece.get_adjacent_enemy_groups()
 
-    def place_piece(self, x, y):
-        # change reference in board_array
-        self.board_array[x][y] = self.go.current_player
+        enemy_piece: set[Piece]
+        for enemy_group in adjacent_enemy_groups:
 
-        # place the piece
-        current_piece = self.pieces_array[x][y]
-        current_piece.place_piece(self.go.current_player)
+            # Gets the enemy test_piece group
+            print(enemy_group)
 
-        # Get the surrounding pieces (up, right, down, left)
-        surrounding_pieces = self.game_logic.get_surrounding_pieces(x, y, self.pieces_array)
+            enemy_group_liberty = sum([piece.get_liberties() for piece in enemy_group])
 
-        # Sets liberty to 0
-        current_piece.liberties = 0
+            if enemy_group_liberty == 0:
+                [piece.reset_piece() for piece in enemy_group]
 
-        # Updates the liberties for itself and all surrounding pieces
-        for surrounding_piece in surrounding_pieces:
-            # if the surrounding_piece is an empty piece
-            if surrounding_piece.player == 0:
-                current_piece.liberties += 1  # increase the new piece liberty by 1
-            else:
-                surrounding_piece.liberties -= 1  # otherwise decrease the surrounding piece liberty by 1
-
-        for surrounding_piece in surrounding_pieces:
-            if current_piece.player == surrounding_piece.player:
-                GameLogic.merge_pieces_groups(current_piece, surrounding_piece)
-
-        involved_groups = [current_piece.group]
-
-        for surrounding_piece in surrounding_pieces:
-            already_there = False
-
-            if surrounding_piece.player == 0:
-                continue
-
-            for group in involved_groups:
-                if surrounding_piece.group is group:
-                    already_there = True
-                    break
-
-            if not already_there:
-                involved_groups.append(surrounding_piece.group)
-
-        for group in involved_groups:
-            liberty = 0
-            for piece in group:
-                liberty = liberty + piece.liberties
-
-            if liberty == 0:
-                for piece in group:
-                    piece.reset_piece()
+        # self.print_board_array()
+        print("------------------------------")
+        # self.print_piece_array()
 
         self.go.next_turn()
 
