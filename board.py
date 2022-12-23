@@ -1,3 +1,5 @@
+import copy
+
 from PyQt6.QtWidgets import QFrame, QGridLayout
 from PyQt6.QtCore import Qt, QBasicTimer, pyqtSignal, QPoint
 from PyQt6.QtGui import QPainter, QPen, QPixmap
@@ -27,6 +29,9 @@ class Board(QFrame):  # base the board on a QFrame widget
         # Create a 2d int[7][7] array to store the current state of the game
         self.board_array = [[0 for _ in range(Board.board_size)] for _ in range(Board.board_size)]
         self.pieces_array = []
+
+        self.undo_stack = []
+        self.redo_stack = []
 
         # Create a layout for the board that will contain the Pieces objects
         self.pieces_layout = QGridLayout(self)
@@ -124,7 +129,10 @@ class Board(QFrame):  # base the board on a QFrame widget
 
     def make_move(self, piece, adjacent_enemy_groups=None):
         # Places the test_piece in the board and updates the board array
-        self.place_piece(piece)
+
+        self.undo_stack.append((copy.deepcopy(self.board_array), self.go.current_player))
+
+        self.place_piece(piece, self.go.current_player)
 
         if adjacent_enemy_groups is None:
             adjacent_enemy_groups = piece.get_adjacent_enemy_groups()
@@ -143,6 +151,10 @@ class Board(QFrame):  # base the board on a QFrame widget
         # self.print_board_array()
         print("------------------------------")
         # self.print_piece_array()
+
+        # Empties the redo_stack if there was anything on there
+        if self.redo_stack:
+            self.redo_stack[:] = []
 
         self.go.next_turn()
 
@@ -183,6 +195,60 @@ class Board(QFrame):  # base the board on a QFrame widget
 
             # Draws the columns
             painter.drawLine(xy_position, board_start, xy_position, board_end)
+
+    def load_state(self, board_state: list[list[int]], player_state: int):
+        """
+        Loads the given state into the board and updates the current player.
+
+        This method updates the board to reflect the given state. If a piece is already in the correct position, it is
+        not modified. Otherwise, the piece is placed as necessary. The current player of the game is also updated based
+        on the given player state.
+
+        :param board_state: A 2D list representing the state to be loaded into the board.
+        :param player_state: An integer representing whose turn it was at that board state.
+        """
+
+        for row, board_row in enumerate(board_state):
+            for column, value in enumerate(board_row):
+
+                if self.board_array[row][column] == value:
+                    continue
+
+                self.pieces_array[row][column].place_piece(value)
+
+        self.board_array = board_state
+        self.go.current_player = player_state
+
+    def undo_move(self):
+        """
+        Undoes the last move made in the game.
+
+        This method retrieves the last state of the board and current player from the undo stack and loads it into the
+        game.
+        If the undo stack is empty, this method does nothing. The state that is undone is also added to the redo stack
+        for potential future use.
+        """
+
+        if not self.undo_stack:
+            return
+
+        self.redo_stack.append((copy.deepcopy(self.board_array), self.go.current_player))
+        self.load_state(*self.undo_stack.pop())
+
+    def redo_move(self):
+        """
+        Redoes the previous move that was undone.
+
+        This method retrieves the state of the board and current player from the top of the redo stack and applies it to
+        the game.
+        The current state of the board and player are then added to the undo stack to allow for future undos.
+        """
+
+        if not self.redo_stack:
+            return
+
+        self.undo_stack.append((copy.deepcopy(self.board_array), self.go.current_player))
+        self.load_state(*self.redo_stack.pop())
 
     # EVENTS ===========================================
 
