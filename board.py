@@ -146,7 +146,7 @@ class Board(QFrame):  # base the board on a QFrame widget
             enemy_group_liberty = sum([piece.get_liberties() for piece in enemy_group])
 
             if enemy_group_liberty == 0:
-                [piece.reset_piece() for piece in enemy_group]
+                [self.place_piece(piece, 0) for piece in enemy_group]
 
         # self.print_board_array()
         print("------------------------------")
@@ -167,12 +167,12 @@ class Board(QFrame):  # base the board on a QFrame widget
                 print(piece.player, end="\t")
             print()
 
-    def place_piece(self, piece):
+    def place_piece(self, piece, player):
         # change reference in board_array
-        self.board_array[piece.row][piece.column] = self.go.current_player
+        self.board_array[piece.row][piece.column] = player
 
         # place the test_piece
-        piece.place_piece(self.go.current_player)
+        piece.place_piece(player)
 
     def draw_board_squares(self, painter: QPainter):
         """draw all the square on the board"""
