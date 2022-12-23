@@ -12,8 +12,8 @@ class Go(QMainWindow):
 
         self.board = Board(self)
         self.score_board = ScoreBoard()
-        self.turn_counter = cycle([1, 2])
-        self.current_player = next(self.turn_counter)
+        self.num_players = 2
+        self.current_player = 1
 
         self.init_ui()
 
@@ -44,4 +44,4 @@ class Go(QMainWindow):
         self.show()
 
     def next_turn(self):
-        self.current_player = next(self.turn_counter)
+        self.current_player = (self.current_player % self.num_players) + 1
