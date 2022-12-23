@@ -42,5 +42,5 @@ class ScoreBoard(QLabel):
 
         update = "Time Remaining:" + str(time_remaining)
         self.label_time_remaining.setText(update)
-        print('slot ' + update)
+        # print('slot ' + update)
         # self.redraw()

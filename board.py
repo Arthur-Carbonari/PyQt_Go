@@ -206,7 +206,7 @@ class Board(QFrame):  # base the board on a QFrame widget
             if Board.counter == 0:
                 print("Game over")
             self.counter -= 1
-            print('timerEvent()', self.counter)
+            # print('timerEvent()', self.counter)
             self.update_timer_signal.emit(self.counter)
         else:
             super(Board, self).timerEvent(event)  # if we do not handle an event we should pass it to the super
