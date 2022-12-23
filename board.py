@@ -84,12 +84,39 @@ class Board(QFrame):  # base the board on a QFrame widget
         # TODO write code to reset game
 
     def try_move(self, x, y):
-        """tries to place a piece"""
+        """tries to place a test_piece"""
 
-        # check if move is valid
-        if self.game_logic.valid_move(self.go.current_player, x, y):
-            self.place_piece(x, y)
+        test_piece = self.pieces_array[x][y]
+
+        # if the test_piece is already set to a player the move is not valid
+        if test_piece.player != 0:
+            print("invalid move")  # warn the user the move is not valid
             return
+
+        # Check if any of the adjacent pieces are empty, if they are the move is immediately valid
+        adjacent_piece: Piece
+        for adjacent_piece in test_piece.adjacency_list:
+            if adjacent_piece.player == 0:
+                self.make_move(test_piece)
+                return
+
+        # Check if the move will result in self capture of the group, if it does not its valid
+        test_piece.player = self.go.current_player  # Easiest way of doing this is by setting the test_piece temporarily
+
+        group_liberty = sum([piece.get_liberties() for piece in test_piece.get_group()])
+        if group_liberty > 0:
+            self.make_move(test_piece)
+            return
+
+        # Check if move is made it will result in capture of enemy group (if it does the move is valid by go rules)
+        adjacent_enemy_groups = test_piece.get_adjacent_enemy_groups()
+
+        for enemy_group in adjacent_enemy_groups:
+            enemy_group_liberty = sum([piece.get_liberties() for piece in enemy_group])
+
+            if enemy_group_liberty == 0:
+                self.make_move(test_piece, adjacent_enemy_groups)
+                return
 
         print("invalid")
 
