@@ -35,19 +35,12 @@ class Piece(QPushButton):
         self.board.try_move(self.row, self.column)
 
     def place_piece(self, player):
+        self.player = player
         self.setIcon(QIcon(Piece.piece_icons_paths[player]))
-
         self.setStyleSheet(f"""
                     border-radius: {self._get_border_radius()}%;
                     background: {self.piece_colors[player]};
         """)
-
-        self.player = player
-
-    def reset_piece(self):
-        self.player = 0
-        self.setIcon(QIcon(Piece.piece_icons_paths[0]))
-        self.setStyleSheet(f"border-radius: {self._get_border_radius()}%;")
 
     def get_piece(self):  # return PieceType
         return self.Status
