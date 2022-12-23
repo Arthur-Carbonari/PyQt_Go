@@ -1,5 +1,6 @@
 from itertools import cycle
 
+from PyQt6.QtGui import QShortcut, QKeySequence
 from PyQt6.QtWidgets import QMainWindow, QWidget, QHBoxLayout
 from board import Board
 from score_board import ScoreBoard
@@ -14,6 +15,12 @@ class Go(QMainWindow):
         self.score_board = ScoreBoard()
         self.num_players = 2
         self.current_player = 1
+
+        undo = QShortcut(QKeySequence("Ctrl+Z"), self)
+        undo.activated.connect(self.board.undo_move)
+
+        redo = QShortcut(QKeySequence("Ctrl+Y"), self)
+        redo.activated.connect(self.board.redo_move)
 
         self.init_ui()
 
