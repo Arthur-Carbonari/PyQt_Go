@@ -7,7 +7,6 @@ class Piece(QPushButton):
     NoPiece = 0
     White = 1
     Black = 2
-    Status = 0  # default to no piece
 
     piece_colors = ["#0000", "#fff", "#000"]
 
@@ -41,9 +40,6 @@ class Piece(QPushButton):
                     border-radius: {self._get_border_radius()}%;
                     background: {self.piece_colors[player]};
         """)
-
-    def get_piece(self):  # return PieceType
-        return self.Status
 
     def get_liberties(self):  # return Liberties
         liberty = 0
