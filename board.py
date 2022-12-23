@@ -148,7 +148,22 @@ class Board(QFrame):  # base the board on a QFrame widget
                     piece.reset_piece()
 
         self.go.next_turn()
-        return
+
+    def print_piece_array(self):
+
+        print("Pieces array:")
+
+        for row in self.pieces_array:
+            for piece in row:
+                print(piece.player, end="\t")
+            print()
+
+    def place_piece(self, piece):
+        # change reference in board_array
+        self.board_array[piece.row][piece.column] = self.go.current_player
+
+        # place the test_piece
+        piece.place_piece(self.go.current_player)
 
     def draw_board_squares(self, painter: QPainter):
         """draw all the square on the board"""
