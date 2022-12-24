@@ -11,6 +11,7 @@ class ScoreBoard(QWidget):
     def __init__(self):
         super().__init__()
 
+        self.background = QPixmap("./icons/sb_background.png")
         self.captured_pieces = [0, 0]
 
         self.players = ["Black", "White"]
