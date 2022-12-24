@@ -141,7 +141,7 @@ class ScoreBoard(QWidget):
 
     def game_over(self):
         """updates scoreboard to show scores and winner"""
-        self.time_label.setText("Game over, winner " + self.players[self.current_player] + " player")
+        self.time_label.setText("Game over, " + self.players[(self.current_player+1) % 2] + " player wins")
 
     # TODO: This could be prettier
     def paintEvent(self, event):

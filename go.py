@@ -13,6 +13,8 @@ class Go(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        self.game_over = False  # TODO: when true seize all operations, merge it with previous one
+
         self.board = Board(self)
         self.score_board = ScoreBoard()
         self.num_players = 2
@@ -46,6 +48,7 @@ class Go(QMainWindow):
         self.score_board.make_connection(self.board)
         # make connection with signal with score_board name change
         self.player_changed_signal.connect(self.score_board.change_player)
+        self.board.time_over_signal.connect(self.finish_game)
 
         screen = self.screen().availableGeometry()
 
@@ -59,3 +62,6 @@ class Go(QMainWindow):
         self.current_player = (self.current_player % self.num_players) + 1
         self.player_changed_signal.emit(self.current_player-1)  # TODO: why not use 0-1 instead of 1-2 like this
         # TODO: reset timer
+
+    def finish_game(self):
+        self.game_over = True  # GAME OVER
