@@ -1,12 +1,15 @@
-from PyQt6.QtWidgets import QVBoxLayout, QLabel
-from PyQt6.QtCore import pyqtSlot
+from PyQt6.QtGui import QPixmap, QPainter
+from PyQt6.QtWidgets import QVBoxLayout, QLabel, QWidget, QFrame
+from PyQt6.QtCore import pyqtSlot, QPoint
 
 
-class ScoreBoard(QLabel):
+# TODO names, turn counter, timer, skip button
+
+class ScoreBoard(QWidget):
     """ base the score_board on a QLabel"""
-
     def __init__(self):
         super().__init__()
+        self.background = QPixmap("./icons/sb_background.png")
 
         self.players = ["Black", "White"]
         # create two labels which will be updated by signals
@@ -31,6 +34,8 @@ class ScoreBoard(QLabel):
         board.click_location_signal.connect(self.set_click_location)
         # when the update_timer_signal is emitted in the board the setTimeRemaining slot receives it
         board.update_timer_signal.connect(self.set_time_remaining)
+        # when game over due to clock hit zero
+        board.time_over_signal.connect(self.game_over)
 
     @pyqtSlot(str)  # checks to make sure that the following slot is receiving an argument of the type 'int'
     def set_click_location(self, click_loc):
@@ -47,3 +52,20 @@ class ScoreBoard(QLabel):
         self.label_time_remaining.setText(update)
         # print('slot ' + update)
         # self.redraw()
+
+    def change_player(self, player_no):
+        self.player_label.setText("Current Player: " + self.players[player_no])
+
+    def game_over(self):
+        """updates scoreboard to show scores and winner"""
+        self.label_time_remaining.setText("Game over, winner" + self.players[next(self.turn_counter)])
+
+    # TODO: This could be prettier
+    def paintEvent(self, event):
+        """paints the board and the pieces of the game"""
+
+        painter = QPainter(self)
+        painter.setOpacity(0.5)
+        # Draws the board background
+        self.background = self.background.scaled(self.width(), self.height())
+        painter.drawPixmap(QPoint(), self.background)

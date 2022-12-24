@@ -10,10 +10,12 @@ from piece import Piece
 class Board(QFrame):  # base the board on a QFrame widget
     update_timer_signal = pyqtSignal(int)  # signal sent when timer is updated
     click_location_signal = pyqtSignal(str)  # signal sent when there is a new click location
+    time_over_signal = pyqtSignal()     # signal sent when timer hit 0
 
     board_size = 16  # board is 7x7 squares wide
 
     timer_speed = 1000  # the timer updates every 1 second
+    # TODO: counter gonna be 2 mins = 120,000
     counter = 10  # the number the counter will count down from
 
     background_path = "./icons/board_background.jpg"
@@ -25,6 +27,8 @@ class Board(QFrame):  # base the board on a QFrame widget
 
         self.timer = QBasicTimer()  # create a timer for the game
         self.is_started = False  # game is not currently started
+        self.is_timed_mode_on = True    # Speed go mode, change this to deactivate game over with timer
+        self.game_over = False   # TODO: when true seize all operations
 
         # Create a 2d int[7][7] array to store the current state of the game
         self.board_array = [[0 for _ in range(Board.board_size)] for _ in range(Board.board_size)]
@@ -289,8 +293,11 @@ class Board(QFrame):  # base the board on a QFrame widget
 
         # TODO adapt this code to handle your timers
         if event.timerId() == self.timer.timerId():  # if the timer that has 'ticked' is the one in this class
-            if Board.counter == 0:
+            if self.is_timed_mode_on and Board.counter == 0:
+                self.game_over = True  # GAME OVER
+                self.time_over_signal.emit()
                 print("Game over")
+                return  # For stop counting down
             self.counter -= 1
             # print('timerEvent()', self.counter)
             self.update_timer_signal.emit(self.counter)
