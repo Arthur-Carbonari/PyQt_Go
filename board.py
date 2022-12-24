@@ -26,9 +26,10 @@ class Board(QFrame):  # base the board on a QFrame widget
         self.go = go
 
         self.timer = QBasicTimer()  # create a timer for the game
-        self.is_started = False  # game is not currently started
+        # TODO: also if timed mode is deactivated count upwards to see how long to make move
         self.is_timed_mode_on = True    # Speed go mode, change this to deactivate game over with timer
-        self.game_over = False   # TODO: when true seize all operations
+        self.is_started = False  # game is not currently started
+        self.game_over = False   # TODO: when true seize all operations, merge it with previous one
 
         # Create a 2d int[7][7] array to store the current state of the game
         self.board_array = [[0 for _ in range(Board.board_size)] for _ in range(Board.board_size)]
@@ -293,10 +294,10 @@ class Board(QFrame):  # base the board on a QFrame widget
 
         # TODO adapt this code to handle your timers
         if event.timerId() == self.timer.timerId():  # if the timer that has 'ticked' is the one in this class
-            if self.is_timed_mode_on and Board.counter == 0:
+            if self.is_timed_mode_on and self.counter == 0:
                 self.game_over = True  # GAME OVER
                 self.time_over_signal.emit()
-                print("Game over")
+                # print("Game over")
                 return  # For stop counting down
             self.counter -= 1
             # print('timerEvent()', self.counter)
