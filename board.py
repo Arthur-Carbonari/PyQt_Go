@@ -146,7 +146,7 @@ class Board(QFrame):  # base the board on a QFrame widget
         """
 
         # Check if the move is valid
-        if not self.is_move_valid(piece.row, piece.row, self.go.current_player):
+        if not self.is_move_valid(piece.row, piece.column, self.go.current_player):
             print("Invalid Move")
             return
 
