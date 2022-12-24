@@ -28,10 +28,17 @@ class Piece(QPushButton):
         self.clicked.connect(self.click_piece)
 
     def click_piece(self):
+        """
+        Handles a click event on this piece.
+
+        If this piece is already occupied by a player, nothing happens. Otherwise, the make_move method of the
+        associated board is called with this piece as an argument.
+        """
+
         if self.player != 0:
             return
 
-        self.board.try_move(self.row, self.column)
+        self.board.make_move(self)
 
     def place_piece(self, player):
         self.player = player
