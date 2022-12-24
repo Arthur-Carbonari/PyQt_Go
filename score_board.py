@@ -8,7 +8,9 @@ class ScoreBoard(QLabel):
     def __init__(self):
         super().__init__()
 
+        self.players = ["Black", "White"]
         # create two labels which will be updated by signals
+        self.player_label = QLabel("Current Player: " + self.players[0])
         self.label_click_location = QLabel("Click Location: ")
         self.label_time_remaining = QLabel("Time remaining: ")
 
@@ -19,6 +21,7 @@ class ScoreBoard(QLabel):
 
         # create a widget to hold other widgets
         main_layout = QVBoxLayout(self)
+        main_layout.addWidget(self.player_label)
         main_layout.addWidget(self.label_click_location)
         main_layout.addWidget(self.label_time_remaining)
 
