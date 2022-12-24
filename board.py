@@ -88,30 +88,38 @@ class Board(QFrame):  # base the board on a QFrame widget
 
         # TODO write code to reset game
 
-    def try_move(self, x, y):
-        """tries to place a test_piece"""
+    def is_move_valid(self, x, y, player):
+        """
+        Checks if a move is valid in the game of Go.
+
+        This method places a temporary test piece on the board at the given coordinates and checks if it is a valid move
+        according to the rules of Go. The move is considered valid if it does not result in self-capture of the group,
+        if it captures an enemy group, or if it is adjacent to an empty space.
+
+        :param x: The x coordinate of the move.
+        :param y: The y coordinate of the move.
+        :param player: The player making the move.
+        :return: True if the move is valid, False otherwise.
+        """
 
         test_piece = self.pieces_array[x][y]
 
         # if the test_piece is already set to a player the move is not valid
         if test_piece.player != 0:
-            print("invalid move")  # warn the user the move is not valid
-            return
+            return False
 
         # Check if any of the adjacent pieces are empty, if they are the move is immediately valid
         adjacent_piece: Piece
         for adjacent_piece in test_piece.adjacency_list:
             if adjacent_piece.player == 0:
-                self.make_move(test_piece)
-                return
+                return True
 
         # Check if the move will result in self capture of the group, if it does not its valid
-        test_piece.player = self.go.current_player  # Easiest way of doing this is by setting the test_piece temporarily
+        test_piece.player = player  # Easiest way of doing this is by setting the test_piece temporarily
 
         group_liberty = sum([piece.get_liberties() for piece in test_piece.get_group()])
         if group_liberty > 0:
-            self.make_move(test_piece)
-            return
+            return True
 
         # Check if move is made it will result in capture of enemy group (if it does the move is valid by go rules)
         adjacent_enemy_groups = test_piece.get_adjacent_enemy_groups()
@@ -120,24 +128,36 @@ class Board(QFrame):  # base the board on a QFrame widget
             enemy_group_liberty = sum([piece.get_liberties() for piece in enemy_group])
 
             if enemy_group_liberty == 0:
-                self.make_move(test_piece, adjacent_enemy_groups)
-                return
+                return True
 
         # If its none of those cases the move is invalid
         test_piece.player = 0  # we reset the piece player to 0 after testing
-        print("invalid move")  # warn the user the move is not valid
+        return False
 
-    def make_move(self, piece, adjacent_enemy_groups=None):
-        # Places the test_piece in the board and updates the board array
+    def make_move(self, piece):
+        """
+        Makes a move on the board by placing the given piece for the current turns player.
 
+        This method first checks if the move is valid. If the move is valid, it places the piece on the board, removes
+        any enemy groups that have been captured, and updates the current player. If the move is not valid, it notifies
+        the user. TODO: change from printing error message to something in the UI
+
+        :param piece: The piece to be placed on the board.
+        """
+
+        # Check if the move is valid
+        if not self.is_move_valid(piece.row, piece.row, self.go.current_player):
+            print("Invalid Move")
+            return
+
+        # Add current state of the board to the undo stack
         self.undo_stack.append((copy.deepcopy(self.board_array), self.go.current_player))
 
         self.place_piece(piece, self.go.current_player)
 
-        if adjacent_enemy_groups is None:
-            adjacent_enemy_groups = piece.get_adjacent_enemy_groups()
+        adjacent_enemy_groups = piece.get_adjacent_enemy_groups()
 
-        enemy_piece: set[Piece]
+        enemy_group: set[Piece]
         for enemy_group in adjacent_enemy_groups:
 
             # Gets the enemy test_piece group
@@ -149,7 +169,7 @@ class Board(QFrame):  # base the board on a QFrame widget
                 [self.place_piece(piece, 0) for piece in enemy_group]
 
         # self.print_board_array()
-        print("------------------------------")
+        # print("------------------------------")
         # self.print_piece_array()
 
         # Empties the redo_stack if there was anything on there
