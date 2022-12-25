@@ -7,7 +7,7 @@ from Board import Board
 from Piece import Piece
 
 
-# TODO names, turn counter, timer, skip button
+# TODO turn counter, timer, skip button
 
 class ScoreBoard(QWidget):
     """ base the score_board on a QLabel"""
@@ -23,10 +23,13 @@ class ScoreBoard(QWidget):
         self.background = QPixmap("./icons/sb_background.png")
 
         self.players = player_names
-        self.current_player = 1
+        self.current_player = 0
         self.player_pool = cycle(self.players)
-        self.timers = [QBasicTimer() for _ in self.players]   # create a timer for each player
-        self.counters = [ScoreBoard.counter for _ in self.players]
+        self.timer = QBasicTimer()
+        self.timer_labels = [QLabel() for _ in self.players]
+        self.remaining_time = [ScoreBoard.counter for _ in self.players]
+        self.remaining_time[0] += 1   # for delaying timer because when app loading player misses secs
+        # TODO: Still waiting on this
         self.captured_pieces = [0 for _ in self.players]
 
         self.players_box = None
@@ -69,8 +72,7 @@ class ScoreBoard(QWidget):
         group_box = QGroupBox()
         group_layout = QVBoxLayout()
         group_box.setLayout(group_layout)
-        for i in range(len(self.players)):
-            player_no = self.players.index(next(self.player_pool))
+        for player_no in range(len(self.players)):
             # layout for player card and add it to group_layout
             player_box = QGroupBox()
             player_box_layout = QHBoxLayout()
@@ -78,7 +80,7 @@ class ScoreBoard(QWidget):
             group_layout.addWidget(player_box)
             # set icon for player
             player_icon = QLabel()
-            player_icon.setPixmap(QIcon(Piece.piece_icons_paths[i+1]).pixmap(64, 64))
+            player_icon.setPixmap(QIcon(Piece.piece_icons_paths[player_no+1]).pixmap(64, 64))
             # player information
             player_info_layout = QVBoxLayout()
             # player name
@@ -86,15 +88,15 @@ class ScoreBoard(QWidget):
             player_name.setFont(QFont("serif", 15))
             # TODO: waiting for captured pieces logic
             # captured pieces by player
-            captured_pieces = QLabel("Pieces: ",)
+            captured_pieces = QLabel("Pieces: " + str(self.captured_pieces[player_no]))
             # timer for player
-            player_timer = self.counters[player_no]
-            player_timer_label = QLabel("Time: " + str(player_timer))
+            player_timer = self.remaining_time[player_no]
+            self.timer_labels[player_no].setText("Time: " + str(player_timer))
 
             player_info_layout.addStretch()
             player_info_layout.addWidget(player_name)
             player_info_layout.addWidget(captured_pieces)
-            player_info_layout.addWidget(player_timer_label)
+            player_info_layout.addWidget(self.timer_labels[player_no])
             player_info_layout.addStretch()
 
             player_box_layout.addWidget(player_icon)
@@ -149,9 +151,11 @@ class ScoreBoard(QWidget):
         return buttons_line
 
     def start(self):
-        print("a")
+
         # TODO: handle this
-        # self.timer.start(self.timer_speed, self)  # start the timer with the correct speed
+        print("a")
+        # self.timers[self.current_player].start(self.timer_speed, self) # start the correct timer with the correct speed
+        self.timer.start(self.timer_speed, self)
 
     def make_connection(self, board):
         """this handles a signal sent from the board class"""
@@ -175,7 +179,10 @@ class ScoreBoard(QWidget):
         # self.redraw()
 
     def change_player(self, player_no):
+        # previous_player =
+        print(self.current_player)
         self.current_player = player_no
+        print(self.current_player)
         # TODO: UPDATE WHEEL
 
     def game_over(self):
@@ -194,19 +201,20 @@ class ScoreBoard(QWidget):
 
     def timerEvent(self, event):
         """this event is automatically called when the timer is updated. based on the timer_speed variable """
-        current_player = self.go.current_player
         # TODO adapt this code to handle your timers to different modes
         # if the timer that has 'ticked' is the one in this class
-        if event.timerId() == self.timers[current_player-1].timerId():
-            if self.go.is_timed_mode_on and self.counters[current_player] == 0:
+        if event.timerId() == self.timer.timerId():
+            if self.go.is_timed_mode_on and self.remaining_time[self.current_player] == 0:
                 self.go.finish_game()
-                self.go.score_board.game_over()
-                self.timers[current_player-1].stop()
+                self.game_over()
+                self.timer.stop()
                 print("Game over")
                 return  # For stop counting down
-            self.counters[current_player] -= 1
+            # update counter and timer label on scoreboard
+            self.remaining_time[self.current_player] -= 1
+            self.timer_labels[self.current_player].setText("Time: " + str(self.remaining_time[self.current_player]))
             # self.set_time_remaining()
-            print('timerEvent()', self.counter)
+            print('timerEvent()', self.remaining_time)
         else:
             self.go.timerEvent(event)  # if we do not handle an event we should pass it to the super
             # class for handling
