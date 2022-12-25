@@ -7,7 +7,7 @@ from MenuBar import MenuBar
 class WelcomeScreen(QMainWindow):
 
     Main = None
-
+    # TODO: add size of board, player no 2 or 4, timed or normal
     def __init__(self):
         super().__init__()
 
