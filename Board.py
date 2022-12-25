@@ -1,21 +1,16 @@
 import copy
 
 from PyQt6.QtWidgets import QFrame, QGridLayout
-from PyQt6.QtCore import Qt, QBasicTimer, pyqtSignal, QPoint
+from PyQt6.QtCore import Qt, pyqtSignal, QPoint
 from PyQt6.QtGui import QPainter, QPen, QPixmap
 # from PyQt6.QtTest import QTest
 from Piece import Piece
 
 
 class Board(QFrame):  # base the board on a QFrame widget
-    update_timer_signal = pyqtSignal(int)  # signal sent when timer is updated
     click_location_signal = pyqtSignal(str)  # signal sent when there is a new click location
 
     board_size = 16  # board is 7x7 squares wide
-
-    timer_speed = 1000  # the timer updates every 1 second
-    # TODO: counter gonna be 2 mins = 120,000
-    counter = 10  # the number the counter will count down from
 
     background_path = "./icons/board_background.jpg"
 
@@ -24,9 +19,6 @@ class Board(QFrame):  # base the board on a QFrame widget
 
         self.go = go
 
-        self.timer = QBasicTimer()  # create a timer for the game
-        # TODO: also if timed mode is deactivated count upwards to see how long to make move
-        self.is_timed_mode_on = True    # Speed go mode, change this to deactivate game over with timer
         self.is_started = False  # game is not currently started
 
         # Create a 2d int[7][7] array to store the current state of the game
@@ -82,8 +74,7 @@ class Board(QFrame):  # base the board on a QFrame widget
 
         self.is_started = True  # set the boolean which determines if the game has started to TRUE
         self.reset_game()  # reset the game
-        self.timer.start(self.timer_speed, self)  # start the timer with the correct speed
-
+        self.go.score_board.start()
         print("start () - timer is started")
 
     def reset_game(self):
@@ -287,23 +278,6 @@ class Board(QFrame):  # base the board on a QFrame widget
 
         self.pieces_layout.setContentsMargins(space, space, end_space, end_space)
 
-    def timerEvent(self, event):
-        """this event is automatically called when the timer is updated. based on the timer_speed variable """
-
-        # TODO adapt this code to handle your timers to different modes
-        if event.timerId() == self.timer.timerId():  # if the timer that has 'ticked' is the one in this class
-            if self.is_timed_mode_on and self.counter == 0:
-                self.go.finish_game()
-                self.go.score_board.game_over()
-                self.timer.stop()
-                print("Game over")
-                return  # For stop counting down
-            self.counter -= 1
-            # print('timerEvent()', self.counter)
-            self.update_timer_signal.emit(self.counter)
-        else:
-            super(Board, self).timerEvent(event)  # if we do not handle an event we should pass it to the super
-            # class for handling
 
     def paintEvent(self, event):
         """paints the board and the pieces of the game"""

@@ -1,7 +1,9 @@
 from itertools import cycle
 from PyQt6.QtGui import QPixmap, QPainter, QIcon, QFont
 from PyQt6.QtWidgets import QVBoxLayout, QLabel, QWidget, QHBoxLayout, QPushButton, QGroupBox
-from PyQt6.QtCore import pyqtSlot, QPoint
+from PyQt6.QtCore import pyqtSlot, QPoint, QBasicTimer
+
+from Board import Board
 from Piece import Piece
 
 
@@ -10,16 +12,23 @@ from Piece import Piece
 class ScoreBoard(QWidget):
     """ base the score_board on a QLabel"""
 
-    def __init__(self, player_names):
+    timer_speed = 1000  # the timer updates every 1 second
+    # TODO: counter gonna be 2 mins = 120,000
+    counter = 10  # the number the counter will count down from
+
+    def __init__(self, go, player_names):
         super().__init__()
 
+        self.go = go
         self.background = QPixmap("./icons/sb_background.png")
 
         self.players = player_names
         self.current_player = 1
-        self.captured_pieces = [0 for _ in self.players]
         self.player_pool = cycle(self.players)
+        self.timers = [QBasicTimer() for _ in self.players]   # create a timer for each player
+        self.captured_pieces = [0 for _ in self.players]
 
+        self.players_box = None
         self.time_label = QLabel("Time Remaining: NA")
 
         # TODO: this buttons activate signals
@@ -39,7 +48,7 @@ class ScoreBoard(QWidget):
 
         # creating layouts
         # players layout
-        players_box = self.create_players_box()
+        self.players_box = self.create_players_box()
 
         # buttons line
         buttons_box = self.create_button_layout()
@@ -51,16 +60,18 @@ class ScoreBoard(QWidget):
         timer_line.addStretch()
 
         # add all layouts to main layout
-        main_layout.addWidget(players_box)
+        main_layout.addWidget(self.players_box)
         main_layout.addLayout(timer_line)
         main_layout.addLayout(buttons_box)
 
     def create_players_box(self):
-        #TODO add timer here
+        # TODO add timer here
         group_box = QGroupBox()
         group_layout = QVBoxLayout()
         group_box.setLayout(group_layout)
         for i in range(len(self.players)):
+            self.players
+            player_no = self.players.index(next(self.player_pool))
             # layout for player card and add it to group_layout
             player_card_layout = QHBoxLayout()
             group_layout.addLayout(player_card_layout)
@@ -70,10 +81,14 @@ class ScoreBoard(QWidget):
             # player information
             player_info_layout = QVBoxLayout()
             # player name
-            player_name = QLabel(next(self.player_pool))
+            player_name = QLabel(self.players[player_no])
             player_name.setFont(QFont("serif", 15))
+            # TODO: waiting for captured pieces logic
             # captured pieces by player
             captured_pieces = QLabel("Pieces: ",)
+            # timer for player
+            player_timer = self.timers[player_no]
+
 
             player_card_layout.addWidget(player_icon)
             player_card_layout.addLayout(player_info_layout)
@@ -128,12 +143,15 @@ class ScoreBoard(QWidget):
         buttons_line.addStretch()
         return buttons_line
 
+    def start(self):
+        print("a")
+        # TODO: handle this
+        # self.timer.start(self.timer_speed, self)  # start the timer with the correct speed
+
     def make_connection(self, board):
         """this handles a signal sent from the board class"""
         # when the click_location_signal is emitted in board the setClickLocation slot receives it
         board.click_location_signal.connect(self.set_click_location)
-        # when the update_timer_signal is emitted in the board the setTimeRemaining slot receives it
-        board.update_timer_signal.connect(self.set_time_remaining)
 
     @pyqtSlot(str)  # checks to make sure that the following slot is receiving an argument of the type 'int'
     def set_click_location(self, click_loc):
@@ -167,3 +185,20 @@ class ScoreBoard(QWidget):
         # Draws the board background
         self.background = self.background.scaled(self.width(), self.height())
         painter.drawPixmap(QPoint(), self.background)
+
+    def timerEvent(self, event):
+        """this event is automatically called when the timer is updated. based on the timer_speed variable """
+
+        # TODO adapt this code to handle your timers to different modes
+        if event.timerId() == self.timer.timerId():  # if the timer that has 'ticked' is the one in this class
+            if self.go.is_timed_mode_on and self.counter == 0:
+                self.go.finish_game()
+                self.go.score_board.game_over()
+                self.timer.stop()
+                print("Game over")
+                return  # For stop counting down
+            self.counter -= 1
+            print('timerEvent()', self.counter)
+        else:
+            self.go.timerEvent(event)  # if we do not handle an event we should pass it to the super
+            # class for handling
