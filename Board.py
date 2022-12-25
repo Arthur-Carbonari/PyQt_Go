@@ -10,7 +10,6 @@ from Piece import Piece
 class Board(QFrame):  # base the board on a QFrame widget
     update_timer_signal = pyqtSignal(int)  # signal sent when timer is updated
     click_location_signal = pyqtSignal(str)  # signal sent when there is a new click location
-    time_over_signal = pyqtSignal()     # signal sent when timer hit 0
 
     board_size = 16  # board is 7x7 squares wide
 
@@ -294,7 +293,8 @@ class Board(QFrame):  # base the board on a QFrame widget
         # TODO adapt this code to handle your timers to different modes
         if event.timerId() == self.timer.timerId():  # if the timer that has 'ticked' is the one in this class
             if self.is_timed_mode_on and self.counter == 0:
-                self.time_over_signal.emit()
+                self.go.finish_game()
+                self.go.score_board.game_over()
                 self.timer.stop()
                 print("Game over")
                 return  # For stop counting down

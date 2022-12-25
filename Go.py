@@ -40,9 +40,6 @@ class Go(QMainWindow):
         main_layout.addWidget(self.score_board, 2)
 
         self.score_board.make_connection(self.board)
-        # make connection with signal with score_board name change
-        self.player_changed_signal.connect(self.score_board.change_player)
-        self.board.time_over_signal.connect(self.finish_game)
 
         screen = self.screen().availableGeometry()
 

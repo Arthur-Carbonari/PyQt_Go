@@ -117,8 +117,6 @@ class ScoreBoard(QWidget):
         board.click_location_signal.connect(self.set_click_location)
         # when the update_timer_signal is emitted in the board the setTimeRemaining slot receives it
         board.update_timer_signal.connect(self.set_time_remaining)
-        # when game over due to clock hit zero
-        board.time_over_signal.connect(self.game_over)
 
     @pyqtSlot(str)  # checks to make sure that the following slot is receiving an argument of the type 'int'
     def set_click_location(self, click_loc):
