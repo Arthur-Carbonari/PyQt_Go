@@ -56,9 +56,6 @@ class ScoreBoard(QWidget):
         main_layout.addLayout(buttons_box)
 
     def create_players_box(self):
-        # TODO: maybe get this from go
-        piece_icons_paths = ["./icons/empty.png", "icons/player_1_piece.png", "icons/player_2_piece.png"]
-
         #TODO add timer here
         group_box = QGroupBox()
         group_layout = QVBoxLayout()
