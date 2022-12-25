@@ -12,16 +12,14 @@ class Main:
 
         MenuBar.Main = self
         WelcomeScreen.Main = self
+        self.player_names = []
 
         self.current_window = WelcomeScreen()
         self.connect_ws()
         self.current_window.show()
 
-    def connect_ws(self):
-        self.current_window.button.clicked.connect(self.show_game_screen)
-
     def show_game_screen(self):
-        go = Go()
+        go = Go(self.player_names)
 
         self.change_current_window(go)
 
@@ -72,6 +70,13 @@ class Main:
 
         exit(0)
 
+    def connect_ws(self):
+        self.current_window.button.clicked.connect(self.getInput)
+        self.current_window.button.clicked.connect(self.show_game_screen)
+
+    def getInput(self):
+        for name_field in self.current_window.player_name_fields:
+            self.player_names.append(name_field.text())
 
 def main():
     app = QApplication([])

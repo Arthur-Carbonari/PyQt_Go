@@ -12,7 +12,7 @@ class Go(QMainWindow):
     # Python inability to handle circular imports and then justifying it by calling it a bad design patter, is the
     # epitome of everything wrong with python and with python devs
 
-    def __init__(self):
+    def __init__(self, player_names):
         super().__init__()
 
         # TODO: also if timed mode is deactivated count upwards to see how long to make move
@@ -20,7 +20,7 @@ class Go(QMainWindow):
         self.game_over = False  # TODO: when true seize all operations, merge it with previous one
 
         # TODO: will be made more flexible
-        player_names = ["Black", "White"]
+        player_names = player_names if len(player_names) != 0 else ["Black", "White"]
         self.score_board = ScoreBoard(self, player_names)
         self.board = Board(self)
         self.num_players = 2

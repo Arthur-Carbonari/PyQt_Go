@@ -18,11 +18,12 @@ class WelcomeScreen(QMainWindow):
         self.player_count = 2
 
         self.setMenuBar(MenuBar(self).init_menu())
+        # Set window title
         self.setWindowTitle("Welcome to Pokemon Go")
         # Set background color of WelcomeScreen
         self.setObjectName("WelcomeScreen")
         self.background = QPixmap("./icons/welcome_background.jpg")
-
+        self.player_name_fields = []
         # Create the QFrame and set its size and layout
         self.frame = QFrame(self)
         self.frame.setFixedSize(int(self.width() / 2), int(self.height() / 2))
@@ -60,6 +61,7 @@ class WelcomeScreen(QMainWindow):
             player_layout = QHBoxLayout()
             player_label = QLabel("Player " + str(i + 1) + ": ")
             player_input = QLineEdit()
+            self.player_name_fields.append(player_input)
             player_input.setPlaceholderText("Player " + str(i + 1))
             player_layout.addWidget(player_label)
             player_layout.addWidget(player_input)
