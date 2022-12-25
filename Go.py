@@ -55,7 +55,7 @@ class Go(QMainWindow):
         self.current_player = (self.current_player % self.num_players) + 1
         self.player_changed_signal.emit(self.current_player - 1)
         # TODO: dont reset, change it to the next player, the timer will be accumulative it wont reset on turn pass,
-        #  just like in chess
+        #  just like in chess >>>> this for normal mode, not for speed go mode
 
     def finish_game(self):
         self.game_over = True  # GAME OVER
@@ -72,7 +72,7 @@ class GameMenuBar(MenuBar):
         # GAME MENU
 
         # Save Game Action
-        self.save_game_action = QAction(QIcon("./icons/save.png"), "Load Game", game_window)
+        self.save_game_action = QAction(QIcon("./icons/save.png"), "Save Game", game_window)
         self.save_game_action.setShortcut("Ctrl+S")
         self.save_game_action.triggered.connect(game_window.save_game)
 
