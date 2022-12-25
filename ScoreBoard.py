@@ -24,18 +24,17 @@ class ScoreBoard(QWidget):
 
         self.players = player_names
         self.current_player = 0
-        self.player_pool = cycle(self.players)
         self.timer = QBasicTimer()
         self.timer_labels = [QLabel() for _ in self.players]
         self.remaining_time = [ScoreBoard.counter for _ in self.players]
         self.remaining_time[0] += 1   # for delaying timer because when app loading player misses secs
-        # TODO: Still waiting on this
+
+        # TODO: waiting for captured pieces logic
         self.captured_pieces = [0 for _ in self.players]
 
         self.players_box = None
         self.time_label = QLabel("Time Remaining: NA")
 
-        # TODO: this buttons activate signals
         self.undo_btn = QPushButton("Undo")
         self.skip_btn = QPushButton("Skip")
         self.redo_btn = QPushButton("Redo")
@@ -57,15 +56,8 @@ class ScoreBoard(QWidget):
         # buttons line
         buttons_box = self.create_button_layout()
 
-        # TODO: this is for us to see the timer
-        timer_line = QHBoxLayout()
-        timer_line.addStretch()
-        timer_line.addWidget(self.time_label)
-        timer_line.addStretch()
-
         # add all layouts to main layout
         main_layout.addWidget(self.players_box)
-        main_layout.addLayout(timer_line)
         main_layout.addLayout(buttons_box)
 
     def create_players_boxes(self):
@@ -78,15 +70,16 @@ class ScoreBoard(QWidget):
             player_box_layout = QHBoxLayout()
             player_box.setLayout(player_box_layout)
             group_layout.addWidget(player_box)
+
             # set icon for player
             player_icon = QLabel()
             player_icon.setPixmap(QIcon(Piece.piece_icons_paths[player_no+1]).pixmap(64, 64))
+
             # player information
             player_info_layout = QVBoxLayout()
             # player name
             player_name = QLabel(self.players[player_no])
             player_name.setFont(QFont("serif", 15))
-            # TODO: waiting for captured pieces logic
             # captured pieces by player
             captured_pieces = QLabel("Pieces: " + str(self.captured_pieces[player_no]))
             # timer for player
@@ -103,43 +96,6 @@ class ScoreBoard(QWidget):
             player_box_layout.addLayout(player_info_layout)
 
         return group_box
-
-    # def create_captured_box(self):
-    #     # captured pieces layout
-    #     group_box = QGroupBox()
-    #     captured_pieces_layout = QVBoxLayout()
-    #     group_box.setLayout(captured_pieces_layout)
-    #
-    #     # captured pieces main header line
-    #     captured_main_header_line = QHBoxLayout()
-    #     captured_pieces_layout.addLayout(captured_main_header_line)
-    #     # adding stretches to align QLabel
-    #     captured_main_header_line.addStretch()
-    #     captured_main_header_line.addWidget(QLabel("=== Captured Pieces ==="))
-    #     captured_main_header_line.addStretch()
-    #
-    #     # layout for secondary headers and counters
-    #     pieces_layout = QVBoxLayout()
-    #     captured_pieces_layout.addLayout(pieces_layout)
-    #
-    #     # set captured pieces secondary headers line
-    #     pieces_header_line = QHBoxLayout()
-    #     pieces_layout.addLayout(pieces_header_line)
-    #     # adding stretches to align QLabels
-    #     pieces_header_line.addStretch()
-    #     pieces_header_line.addWidget(QLabel("Black"))
-    #     pieces_header_line.addStretch()
-    #     pieces_header_line.addWidget(QLabel("White"))
-    #     pieces_header_line.addStretch()
-    #
-    #     # set captured pieces amounts line
-    #     captured_amount_line = QHBoxLayout()
-    #     pieces_layout.addLayout(captured_amount_line)
-    #     # adding stretches to align QLabels
-    #     captured_amount_line.addStretch()
-    #     captured_amount_line.addStretch()
-    #
-    #     return group_box
 
     def create_button_layout(self):
         buttons_line = QHBoxLayout()
@@ -161,6 +117,12 @@ class ScoreBoard(QWidget):
         """this handles a signal sent from the board class"""
         # when the click_location_signal is emitted in board the setClickLocation slot receives it
         board.click_location_signal.connect(self.set_click_location)
+        # initiate undo move method
+        self.undo_btn.clicked.connect(self.go.board.undo_move)
+        # initiate skip turn method
+        # self.skip_btn.clicked.connect(self.go.board)  #TODO: waiting skip turn logic
+        # initiate redo move method
+        self.redo_btn.clicked.connect(self.go.board.redo_move)
 
     @pyqtSlot(str)  # checks to make sure that the following slot is receiving an argument of the type 'int'
     def set_click_location(self, click_loc):
@@ -179,15 +141,15 @@ class ScoreBoard(QWidget):
         # self.redraw()
 
     def change_player(self, player_no):
-        # previous_player =
-        print(self.current_player)
+        """changes current player"""
         self.current_player = player_no
-        print(self.current_player)
         # TODO: UPDATE WHEEL
 
-    def game_over(self):
+    def eliminate_player(self):
         """updates scoreboard to show scores and winner"""
-        self.time_label.setText("Game over, " + self.players[(self.current_player + 1) % 2] + " player wins")
+        self.timer_labels[self.current_player].setText("Player Eliminated")
+        #TODO: elimiate player from using moves
+
 
     # TODO: This could be prettier
     def paintEvent(self, event):
@@ -206,7 +168,7 @@ class ScoreBoard(QWidget):
         if event.timerId() == self.timer.timerId():
             if self.go.is_timed_mode_on and self.remaining_time[self.current_player] == 0:
                 self.go.finish_game()
-                self.game_over()
+                self.eliminate_player()
                 self.timer.stop()
                 print("Game over")
                 return  # For stop counting down
