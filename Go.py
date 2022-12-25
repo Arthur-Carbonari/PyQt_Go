@@ -64,6 +64,10 @@ class Go(QMainWindow):
     def save_game(self):
         print("Save the current state of the game to a file")
 
+    def reset_game(self):
+        self.board.reset()
+        # self.score_board.reset()
+
 
 class GameMenuBar(MenuBar):
 
@@ -71,6 +75,11 @@ class GameMenuBar(MenuBar):
         super().__init__(game_window)
 
         # GAME MENU
+
+        # Reset Game Action
+        self.reset_game_action = QAction(QIcon("./icons/save.png"), "Load Game", game_window)
+        self.reset_game_action.setShortcut("Ctrl+R")
+        self.reset_game_action.triggered.connect(game_window.reset_game)
 
         # Save Game Action
         self.save_game_action = QAction(QIcon("./icons/save.png"), "Save Game", game_window)
@@ -97,6 +106,7 @@ class GameMenuBar(MenuBar):
         help_menu = self.addMenu("&Help")
 
         # Add actions to menus
+        game_menu.addAction(self.reset_game_action)
         game_menu.addAction(self.new_game_action)
         game_menu.addAction(self.save_game_action)
         game_menu.addAction(self.load_game_action)
