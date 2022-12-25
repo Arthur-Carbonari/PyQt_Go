@@ -26,6 +26,7 @@ class ScoreBoard(QWidget):
         self.current_player = 1
         self.player_pool = cycle(self.players)
         self.timers = [QBasicTimer() for _ in self.players]   # create a timer for each player
+        self.counters = [ScoreBoard.counter for _ in self.players]
         self.captured_pieces = [0 for _ in self.players]
 
         self.players_box = None
@@ -48,7 +49,7 @@ class ScoreBoard(QWidget):
 
         # creating layouts
         # players layout
-        self.players_box = self.create_players_box()
+        self.players_box = self.create_players_boxes()
 
         # buttons line
         buttons_box = self.create_button_layout()
@@ -64,17 +65,17 @@ class ScoreBoard(QWidget):
         main_layout.addLayout(timer_line)
         main_layout.addLayout(buttons_box)
 
-    def create_players_box(self):
-        # TODO add timer here
+    def create_players_boxes(self):
         group_box = QGroupBox()
         group_layout = QVBoxLayout()
         group_box.setLayout(group_layout)
         for i in range(len(self.players)):
-            self.players
             player_no = self.players.index(next(self.player_pool))
             # layout for player card and add it to group_layout
-            player_card_layout = QHBoxLayout()
-            group_layout.addLayout(player_card_layout)
+            player_box = QGroupBox()
+            player_box_layout = QHBoxLayout()
+            player_box.setLayout(player_box_layout)
+            group_layout.addWidget(player_box)
             # set icon for player
             player_icon = QLabel()
             player_icon.setPixmap(QIcon(Piece.piece_icons_paths[i+1]).pixmap(64, 64))
@@ -87,13 +88,17 @@ class ScoreBoard(QWidget):
             # captured pieces by player
             captured_pieces = QLabel("Pieces: ",)
             # timer for player
-            player_timer = self.timers[player_no]
+            player_timer = self.counters[player_no]
+            player_timer_label = QLabel("Time: " + str(player_timer))
 
-
-            player_card_layout.addWidget(player_icon)
-            player_card_layout.addLayout(player_info_layout)
-
+            player_info_layout.addStretch()
             player_info_layout.addWidget(player_name)
+            player_info_layout.addWidget(captured_pieces)
+            player_info_layout.addWidget(player_timer_label)
+            player_info_layout.addStretch()
+
+            player_box_layout.addWidget(player_icon)
+            player_box_layout.addLayout(player_info_layout)
 
         return group_box
 
@@ -162,9 +167,10 @@ class ScoreBoard(QWidget):
     @pyqtSlot(int)
     def set_time_remaining(self, time_remaining):
         """updates the time remaining label to show the time remaining"""
+        current_player = self.go.current_player
 
         update = "Time Remaining: " + str(time_remaining)
-        self.time_label.setText(update)
+        # self.time_label.setText(update)
         # print('slot ' + update)
         # self.redraw()
 
@@ -188,16 +194,18 @@ class ScoreBoard(QWidget):
 
     def timerEvent(self, event):
         """this event is automatically called when the timer is updated. based on the timer_speed variable """
-
+        current_player = self.go.current_player
         # TODO adapt this code to handle your timers to different modes
-        if event.timerId() == self.timer.timerId():  # if the timer that has 'ticked' is the one in this class
-            if self.go.is_timed_mode_on and self.counter == 0:
+        # if the timer that has 'ticked' is the one in this class
+        if event.timerId() == self.timers[current_player-1].timerId():
+            if self.go.is_timed_mode_on and self.counters[current_player] == 0:
                 self.go.finish_game()
                 self.go.score_board.game_over()
-                self.timer.stop()
+                self.timers[current_player-1].stop()
                 print("Game over")
                 return  # For stop counting down
-            self.counter -= 1
+            self.counters[current_player] -= 1
+            # self.set_time_remaining()
             print('timerEvent()', self.counter)
         else:
             self.go.timerEvent(event)  # if we do not handle an event we should pass it to the super
