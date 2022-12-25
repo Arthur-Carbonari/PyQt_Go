@@ -1,6 +1,6 @@
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtGui import QAction, QIcon
-from PyQt6.QtWidgets import QMainWindow, QWidget, QHBoxLayout
+from PyQt6.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QMessageBox
 from Board import Board
 from MenuBar import MenuBar
 from ScoreBoard import ScoreBoard
@@ -65,8 +65,24 @@ class Go(QMainWindow):
         print("Save the current state of the game to a file")
 
     def reset_game(self):
-        self.board.reset()
+
+        result = QMessageBox.question(self, "Reset Game?",
+                                      "Are you sure you want to reset the current game?",
+                                      QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                                      QMessageBox.StandardButton.No)
+
+        # Check the result of the dialog
+        if result == QMessageBox.StandardButton.No:
+            return
+
+        # If this is false that means that no move has been made so no need to reset the board
+        if self.board.undo_stack:
+            self.board.reset()
+
+        # reset the score board
         # self.score_board.reset()
+
+        self.current_player = 1
 
 
 class GameMenuBar(MenuBar):
