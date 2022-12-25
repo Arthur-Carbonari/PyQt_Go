@@ -18,7 +18,9 @@ class Go(QMainWindow):
         self.game_over = False  # TODO: when true seize all operations, merge it with previous one
 
         self.board = Board(self)
-        self.score_board = ScoreBoard()
+        # TODO: will be made more flexible
+        player_names = ["Black", "White"]
+        self.score_board = ScoreBoard(player_names)
         self.num_players = 2
         self.current_player = 1
 
@@ -50,9 +52,9 @@ class Go(QMainWindow):
 
     def next_turn(self):
         self.current_player = (self.current_player % self.num_players) + 1
-        self.player_changed_signal.emit(self.current_player - 1)
+        self.score_board.change_player(self.current_player - 1)
         # TODO: dont reset, change it to the next player, the timer will be accumulative it wont reset on turn pass,
-        #  just like in chess >>>> this for normal mode, not for speed go mode
+        #  just like in chess
 
     def finish_game(self):
         self.game_over = True  # GAME OVER
