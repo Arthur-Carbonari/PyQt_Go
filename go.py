@@ -2,6 +2,7 @@ from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtGui import QShortcut, QKeySequence
 from PyQt6.QtWidgets import QMainWindow, QWidget, QHBoxLayout
 from board import Board
+from menu_bar import MenuBar
 from score_board import ScoreBoard
 
 
@@ -60,3 +61,54 @@ class Go(QMainWindow):
 
     def finish_game(self):
         self.game_over = True  # GAME OVER
+
+    def save_game(self):
+        print("Save the current state of the game to a file")
+
+
+class GameMenuBar(MenuBar):
+
+    def __init__(self, game_window: Go):
+        super().__init__(game_window)
+
+        # GAME MENU
+
+        # Save Game Action
+        self.save_game_action = QAction(QIcon("./icons/save.png"), "Load Game", game_window)
+        self.save_game_action.setShortcut("Ctrl+S")
+        self.save_game_action.triggered.connect(game_window.save_game)
+
+        # ACTIONS MENU
+
+        # Undo Action
+        self.undo_action = QAction(QIcon("./icons/save.png"), "Undo Move", game_window)
+        self.undo_action.setShortcut("Ctrl+Z")
+        self.undo_action.triggered.connect(game_window.board.undo_move)
+
+        # Redo Action
+        self.redo_action = QAction(QIcon("./icons/save.png"), "Redo Move", game_window)
+        self.redo_action.setShortcut("Ctrl+Y")
+        self.redo_action.triggered.connect(game_window.board.redo_move)
+
+    def init_menu(self):
+        # Add menus to menu bar
+        game_menu = self.addMenu("&Game")
+        actions_menu = self.addMenu("&Actions")
+        window_menu = self.addMenu("&Window")
+        help_menu = self.addMenu("&Help")
+
+        # Add actions to menus
+        game_menu.addAction(self.new_game_action)
+        game_menu.addAction(self.save_game_action)
+        game_menu.addAction(self.load_game_action)
+        game_menu.addAction(self.exit_action)
+
+        actions_menu.addAction(self.undo_action)
+        actions_menu.addAction(self.redo_action)
+
+        window_menu.addAction(self.change_background_action)
+
+        help_menu.addAction(self.help_action)
+        help_menu.addAction(self.about_action)
+
+        return self
