@@ -4,7 +4,7 @@ from PyQt6.QtWidgets import QFrame, QGridLayout
 from PyQt6.QtCore import Qt, QBasicTimer, pyqtSignal, QPoint
 from PyQt6.QtGui import QPainter, QPen, QPixmap
 # from PyQt6.QtTest import QTest
-from piece import Piece
+from Piece import Piece
 
 
 class Board(QFrame):  # base the board on a QFrame widget

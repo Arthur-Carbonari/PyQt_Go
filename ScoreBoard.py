@@ -1,6 +1,6 @@
 from PyQt6.QtGui import QPixmap, QPainter
-from PyQt6.QtWidgets import QVBoxLayout, QLabel, QWidget, QFrame, QHBoxLayout, QPushButton
-from PyQt6.QtCore import pyqtSlot, QPoint, Qt
+from PyQt6.QtWidgets import QVBoxLayout, QLabel, QWidget, QHBoxLayout, QPushButton
+from PyQt6.QtCore import pyqtSlot, QPoint
 
 
 # TODO names, turn counter, timer, skip button

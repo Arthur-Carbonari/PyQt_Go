@@ -1,9 +1,9 @@
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtGui import QAction, QIcon
 from PyQt6.QtWidgets import QMainWindow, QWidget, QHBoxLayout
-from board import Board
-from menu_bar import MenuBar
-from score_board import ScoreBoard
+from Board import Board
+from MenuBar import MenuBar
+from ScoreBoard import ScoreBoard
 
 
 class Go(QMainWindow):

@@ -1,10 +1,9 @@
-from PyQt6.QtCore import QCoreApplication
 from PyQt6.QtWidgets import QApplication, QMessageBox
 import sys
 
-from go import Go
-from menu_bar import MenuBar
-from welcome_screen import WelcomeScreen
+from Go import Go
+from MenuBar import MenuBar
+from WelcomeWindow import WelcomeScreen
 
 
 class Main:

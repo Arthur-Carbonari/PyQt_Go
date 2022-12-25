@@ -1,7 +1,7 @@
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QFrame, QLineEdit, QMainWindow
 
-from menu_bar import MenuBar
+from MenuBar import MenuBar
 
 
 class WelcomeScreen(QMainWindow):
