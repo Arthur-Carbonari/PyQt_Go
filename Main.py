@@ -14,7 +14,11 @@ class Main:
         WelcomeScreen.Main = self
 
         self.current_window = WelcomeScreen()
+        self.connect_ws()
         self.current_window.show()
+
+    def connect_ws(self):
+        self.current_window.button.clicked.connect(self.show_game_screen)
 
     def show_game_screen(self):
         go = Go()
