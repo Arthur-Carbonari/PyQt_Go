@@ -1,5 +1,5 @@
 from PyQt6.QtCore import pyqtSignal
-from PyQt6.QtGui import QShortcut, QKeySequence
+from PyQt6.QtGui import QAction, QIcon
 from PyQt6.QtWidgets import QMainWindow, QWidget, QHBoxLayout
 from board import Board
 from menu_bar import MenuBar
@@ -8,6 +8,9 @@ from score_board import ScoreBoard
 
 class Go(QMainWindow):
     player_changed_signal = pyqtSignal(int)  # signal sent when player changed
+
+    # Python inability to handle circular imports and then justifying it by calling it a bad design patter, is the
+    # epitome of everything wrong with python and with python devs
 
     def __init__(self):
         super().__init__()
@@ -19,11 +22,7 @@ class Go(QMainWindow):
         self.num_players = 2
         self.current_player = 1
 
-        undo = QShortcut(QKeySequence("Ctrl+Z"), self)
-        undo.activated.connect(self.board.undo_move)
-
-        redo = QShortcut(QKeySequence("Ctrl+Y"), self)
-        redo.activated.connect(self.board.redo_move)
+        self.setMenuBar(GameMenuBar(self).init_menu())
 
         self.init_ui()
 
@@ -51,11 +50,10 @@ class Go(QMainWindow):
         self.setMinimumHeight(int(screen.height() * 0.88))
 
         self.setWindowTitle('Go')
-        self.show()
 
     def next_turn(self):
         self.current_player = (self.current_player % self.num_players) + 1
-        self.player_changed_signal.emit(self.current_player-1)
+        self.player_changed_signal.emit(self.current_player - 1)
         # TODO: dont reset, change it to the next player, the timer will be accumulative it wont reset on turn pass,
         #  just like in chess
 
