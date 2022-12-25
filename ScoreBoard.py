@@ -2,18 +2,13 @@ from itertools import cycle
 from PyQt6.QtGui import QPixmap, QPainter, QIcon, QFont
 from PyQt6.QtWidgets import QVBoxLayout, QLabel, QWidget, QHBoxLayout, QPushButton, QGroupBox
 from PyQt6.QtCore import pyqtSlot, QPoint, QBasicTimer
-
-from Board import Board
 from Piece import Piece
-
-
-# TODO turn counter, timer, skip button
 
 class ScoreBoard(QWidget):
     """ base the score_board on a QLabel"""
 
     timer_speed = 1000  # the timer updates every 1 second
-    # TODO: counter gonna be 2 mins = 120,000
+    # TODO: counter going to be 2 mins = 120,000
     counter = 10  # the number the counter will count down from
 
     def __init__(self, go, player_names):
@@ -107,11 +102,8 @@ class ScoreBoard(QWidget):
         return buttons_line
 
     def start(self):
+        self.timer.start(self.timer_speed, self) # start the correct timer with the correct speed
 
-        # TODO: handle this
-        print("a")
-        # self.timers[self.current_player].start(self.timer_speed, self) # start the correct timer with the correct speed
-        self.timer.start(self.timer_speed, self)
 
     def make_connection(self, board):
         """this handles a signal sent from the board class"""
