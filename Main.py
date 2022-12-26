@@ -39,6 +39,7 @@ class Main:
         welcome_screen = WelcomeScreen()
 
         self.change_current_window(welcome_screen)
+        self.connect_ws()
 
     def change_current_window(self, new_window):
         self.current_window.hide()
