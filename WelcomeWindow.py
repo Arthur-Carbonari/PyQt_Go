@@ -28,16 +28,16 @@ class WelcomeScreen(QMainWindow):
         self.background = QPixmap("./icons/welcome_background.jpg")
 
         # items that will be used later
+        self.player_spinbox = QSpinBox()            # number of players comboBox
         self.name_input_box = QVBoxLayout()         # player name box
         self.name_input_fields = []                 # storage for QLineEdits
-        self.player_spinbox = QSpinBox()            # number of players comboBox
         self.board_size_cbox = QComboBox()          # board size comboBox
         self.mode = QRadioButton()                  # game mode radioButton
         self.button = QPushButton("Start Game")     # start game button
 
         # Create the QFrame and set its size and layout
         self.frame = QFrame(self)
-        self.frame.setFixedSize(int(self.width() / 2), int(self.height() / 1.8))
+        self.frame.setFixedSize(int(self.width() / 1.7), int(self.height() / 1.5))
         self.frame.setFrameShape(QFrame.Shape.Box)
         self.frame.setStyleSheet('background-color: white;')
         self.main_layout = self.create_main_layout()
@@ -67,6 +67,13 @@ class WelcomeScreen(QMainWindow):
         # add line to main layout
         main_layout.addWidget(label)
 
+        main_layout.addSpacing(self.height()//20)
+
+        # NUMBER OF PLAYERS LINE
+        no_of_players = self.create_number_of_players_line()
+        # add line to main layout
+        main_layout.addLayout(no_of_players)
+
         # PLAYER NAME LINES
         # Create the player name input fields and labels and add them to name input box
         for i in range(self.player_count):
@@ -87,11 +94,6 @@ class WelcomeScreen(QMainWindow):
         main_layout.addStretch()
         main_layout.addLayout(self.name_input_box)
         main_layout.addStretch()
-
-        # NUMBER OF PLAYERS LINE
-        no_of_players = self.create_number_of_players_line()
-        # add line to main layout
-        main_layout.addLayout(no_of_players)
 
         # BOARD SIZE LINE
         board_size = self.create_board_size_line()
