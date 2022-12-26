@@ -25,9 +25,6 @@ class Board(QFrame):  # base the board on a QFrame widget
         self.board_array = [[0 for _ in range(Board.board_size)] for _ in range(Board.board_size)]
         self.pieces_array = []
 
-        self.undo_stack = []
-        self.redo_stack = []
-
         # Create a layout for the board that will contain the Pieces objects
         self.pieces_layout = QGridLayout(self)
         self.pieces_layout.setSpacing(0)
@@ -73,16 +70,19 @@ class Board(QFrame):  # base the board on a QFrame widget
         """starts game"""
 
         self.is_started = True  # set the boolean which determines if the game has started to TRUE
-        self.reset_game()  # reset the game
+        self.reset()  # reset the game
         self.go.score_board.start()
         print("start () - timer is started")
 
-    def reset_game(self):
+    def reset(self):
         """clears pieces from the board"""
 
-        # TODO write code to reset game
+        [[self.place_piece(piece, 0) for piece in piece_row] for piece_row in self.pieces_array]
 
-    def is_move_valid(self, x, y, player):
+    def get_current_state(self):
+        return copy.deepcopy(self.board_array)
+
+    def is_move_valid(self, row, column, player):
         """
         Checks if a move is valid in the game of Go.
 
@@ -90,13 +90,13 @@ class Board(QFrame):  # base the board on a QFrame widget
         according to the rules of Go. The move is considered valid if it does not result in self-capture of the group,
         if it captures an enemy group, or if it is adjacent to an empty space.
 
-        :param x: The x coordinate of the move.
-        :param y: The y coordinate of the move.
+        :param row: The x coordinate of the move.
+        :param column: The y coordinate of the move.
         :param player: The player making the move.
         :return: True if the move is valid, False otherwise.
         """
 
-        test_piece = self.pieces_array[x][y]
+        test_piece = self.pieces_array[row][column]
 
         # if the test_piece is already set to a player the move is not valid
         if test_piece.player != 0:
@@ -128,26 +128,7 @@ class Board(QFrame):  # base the board on a QFrame widget
         test_piece.player = 0  # we reset the piece player to 0 after testing
         return False
 
-    def make_move(self, piece):
-        """
-        Makes a move on the board by placing the given piece for the current turns player.
-
-        This method first checks if the move is valid. If the move is valid, it places the piece on the board, removes
-        any enemy groups that have been captured, and updates the current player. If the move is not valid, it notifies
-        the user. TODO: change from printing error message to something in the UI
-
-        :param piece: The piece to be placed on the board.
-        """
-
-        # Check if the move is valid
-        if not self.is_move_valid(piece.row, piece.column, self.go.current_player):
-            print("Invalid Move")
-            return
-
-        # Add current state of the board to the undo stack
-        self.undo_stack.append((copy.deepcopy(self.board_array), self.go.current_player))
-
-        self.place_piece(piece, self.go.current_player)
+    def capture_surrounding_pieces(self, piece):
 
         adjacent_enemy_groups = piece.get_adjacent_enemy_groups()
 
@@ -161,16 +142,6 @@ class Board(QFrame):  # base the board on a QFrame widget
 
             if enemy_group_liberty == 0:
                 [self.place_piece(piece, 0) for piece in enemy_group]
-
-        # self.print_board_array()
-        # print("------------------------------")
-        # self.print_piece_array()
-
-        # Empties the redo_stack if there was anything on there
-        if self.redo_stack:
-            self.redo_stack[:] = []
-
-        self.go.next_turn()
 
     def print_piece_array(self):
 
@@ -210,16 +181,15 @@ class Board(QFrame):  # base the board on a QFrame widget
             # Draws the columns
             painter.drawLine(xy_position, board_start, xy_position, board_end)
 
-    def load_state(self, board_state: list[list[int]], player_state: int):
+    def load_state(self, board_state: list[list[int]]):
         """
-        Loads the given state into the board and updates the current player.
+        Loads the given state into the board.
 
         This method updates the board to reflect the given state. If a piece is already in the correct position, it is
         not modified. Otherwise, the piece is placed as necessary. The current player of the game is also updated based
         on the given player state.
 
         :param board_state: A 2D list representing the state to be loaded into the board.
-        :param player_state: An integer representing whose turn it was at that board state.
         """
 
         for row, board_row in enumerate(board_state):
@@ -231,38 +201,6 @@ class Board(QFrame):  # base the board on a QFrame widget
                 self.pieces_array[row][column].place_piece(value)
 
         self.board_array = board_state
-        self.go.current_player = player_state
-
-    def undo_move(self):
-        """
-        Undoes the last move made in the game.
-
-        This method retrieves the last state of the board and current player from the undo stack and loads it into the
-        game.
-        If the undo stack is empty, this method does nothing. The state that is undone is also added to the redo stack
-        for potential future use.
-        """
-
-        if not self.undo_stack:
-            return
-
-        self.redo_stack.append((copy.deepcopy(self.board_array), self.go.current_player))
-        self.load_state(*self.undo_stack.pop())
-
-    def redo_move(self):
-        """
-        Redoes the previous move that was undone.
-
-        This method retrieves the state of the board and current player from the top of the redo stack and applies it to
-        the game.
-        The current state of the board and player are then added to the undo stack to allow for future undos.
-        """
-
-        if not self.redo_stack:
-            return
-
-        self.undo_stack.append((copy.deepcopy(self.board_array), self.go.current_player))
-        self.load_state(*self.redo_stack.pop())
 
     # EVENTS ===========================================
 
@@ -277,7 +215,6 @@ class Board(QFrame):  # base the board on a QFrame widget
         end_space = int(self.width() - space - Board.board_size * self.square_size())
 
         self.pieces_layout.setContentsMargins(space, space, end_space, end_space)
-
 
     def paintEvent(self, event):
         """paints the board and the pieces of the game"""
