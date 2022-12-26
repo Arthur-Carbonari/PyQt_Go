@@ -8,7 +8,7 @@ class Piece(QPushButton):
     White = 1
     Black = 2
 
-    piece_colors = ["#0000", "#fff", "#000"]
+    piece_colors = ["#0000", "#000", "#fff"]
 
     piece_icons_paths = ["./icons/empty.png", "icons/player_1_piece.png", "icons/player_2_piece.png"]
 
