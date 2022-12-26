@@ -75,8 +75,9 @@ class Main:
         self.current_window.button.clicked.connect(self.show_game_screen)
 
     def getInput(self):
-        for name_field in self.current_window.player_name_fields:
+        for name_field in self.current_window.name_input_fields:
             self.player_names.append(name_field.text())
+
 
 def main():
     app = QApplication([])
