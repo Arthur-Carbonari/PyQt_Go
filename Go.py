@@ -58,6 +58,35 @@ class Go(QMainWindow):
         # TODO: dont reset, change it to the next player, the timer will be accumulative it wont reset on turn pass,
         #  just like in chess
 
+    def make_move(self, piece):
+        """
+        Makes a move on the board by placing the given piece for the current turns player.
+
+        This method first checks if the move is valid. If the move is valid, it places the piece on the board, removes
+        any enemy groups that have been captured, and updates the current player. If the move is not valid, it notifies
+        the user. TODO: change from printing error message to something in the UI
+
+        :param piece: The piece to be placed on the board.
+        """
+
+        # Check if the move is valid
+        if not self.board.is_move_valid(piece.row, piece.column, self.current_player):
+            print("Invalid Move")
+            return
+
+        # Add current state of the board to the undo stack
+        self.undo_stack.append((self.board.get_current_state(), self.current_player))
+
+        self.board.place_piece(piece, self.current_player)
+
+        self.board.capture_surrounding_pieces(piece)
+
+        # Empties the redo_stack if there was anything on there
+        if self.redo_stack:
+            self.redo_stack[:] = []
+
+        self.next_turn()
+
     def finish_game(self):
         self.game_over = True  # GAME OVER
 

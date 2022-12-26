@@ -38,7 +38,7 @@ class Piece(QPushButton):
         if self.player != 0:
             return
 
-        self.board.make_move(self)
+        self.board.go.make_move(self)
 
     def place_piece(self, player):
         self.player = player

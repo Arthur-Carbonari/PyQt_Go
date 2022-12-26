@@ -130,26 +130,7 @@ class Board(QFrame):  # base the board on a QFrame widget
         test_piece.player = 0  # we reset the piece player to 0 after testing
         return False
 
-    def make_move(self, piece):
-        """
-        Makes a move on the board by placing the given piece for the current turns player.
-
-        This method first checks if the move is valid. If the move is valid, it places the piece on the board, removes
-        any enemy groups that have been captured, and updates the current player. If the move is not valid, it notifies
-        the user. TODO: change from printing error message to something in the UI
-
-        :param piece: The piece to be placed on the board.
-        """
-
-        # Check if the move is valid
-        if not self.is_move_valid(piece.row, piece.column, self.go.current_player):
-            print("Invalid Move")
-            return
-
-        # Add current state of the board to the undo stack
-        self.undo_stack.append((copy.deepcopy(self.board_array), self.go.current_player))
-
-        self.place_piece(piece, self.go.current_player)
+    def capture_surrounding_pieces(self, piece):
 
         adjacent_enemy_groups = piece.get_adjacent_enemy_groups()
 
