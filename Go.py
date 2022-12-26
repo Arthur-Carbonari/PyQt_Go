@@ -1,6 +1,6 @@
 from PyQt6.QtCore import pyqtSignal
-from PyQt6.QtGui import QAction, QIcon
-from PyQt6.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QMessageBox
+from PyQt6.QtGui import QAction, QIcon, QCursor
+from PyQt6.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QMessageBox, QToolTip
 from Board import Board
 from MenuBar import MenuBar
 from ScoreBoard import ScoreBoard
@@ -8,9 +8,6 @@ from ScoreBoard import ScoreBoard
 
 class Go(QMainWindow):
     player_changed_signal = pyqtSignal(int)  # signal sent when player changed
-
-    # Python inability to handle circular imports and then justifying it by calling it a bad design patter, is the
-    # epitome of everything wrong with python and with python devs
 
     def __init__(self, player_names):
         super().__init__()
@@ -76,7 +73,7 @@ class Go(QMainWindow):
 
         # Check if the move is valid
         if not self.board.is_move_valid(piece.row, piece.column, self.current_player):
-            print("Invalid Move")
+            QToolTip.showText(QCursor.pos(), "Invalid Move: Self capture is not allowed")
             return
 
         self.board.place_piece(piece, self.current_player)
@@ -86,7 +83,7 @@ class Go(QMainWindow):
         # Check for Ko situation
         if self.is_ko_situation(piece.row, piece.column):
             # If it's a Ko situation we inform the user and reset the board to its state before the move
-            print("Invalid move, Ko situation")
+            QToolTip.showText(QCursor.pos(), "Invalid Move: Ko Rule")
             self.board.load_state(board_before_move)
             return
 
