@@ -184,8 +184,7 @@ class WelcomeScreen(QMainWindow):
         self.name_input_fields.clear()
     def set_number_of_players(self):
         """sets current player with change of dropbox"""
-        # TODO: will add more QLineEdit to layout
-        #   player name count
+        # player name count
         self.delete_name_input_lines()
         self.player_count = int(self.sender().currentText())
         self.add_name_input_lines()
