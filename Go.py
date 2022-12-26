@@ -188,6 +188,7 @@ class Go(QMainWindow):
         # self.score_board.reset()
 
         self.current_player = 1
+        self.score_board.reset()
 
 
 class GameMenuBar(MenuBar):

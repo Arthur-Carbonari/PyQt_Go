@@ -104,6 +104,12 @@ class ScoreBoard(QWidget):
     def start(self):
         self.timer.start(self.timer_speed, self) # start the correct timer with the correct speed
 
+    def reset(self):
+        self.current_player = 0
+        self.remaining_time = [ScoreBoard.counter for _ in self.players]
+        self.remaining_time[0] += 1  # for delaying timer because when app loading player misses secs
+        self.captured_pieces = [0 for _ in self.players]
+
 
     def make_connection(self, board):
         """this handles a signal sent from the board class"""
@@ -119,14 +125,14 @@ class ScoreBoard(QWidget):
     @pyqtSlot(str)  # checks to make sure that the following slot is receiving an argument of the type 'int'
     def set_click_location(self, click_loc):
         """updates the label to show the click location"""
-
+        #Todo: IS THIS UNNECESSARY
         print('slot ' + click_loc)
 
     @pyqtSlot(int)
     def set_time_remaining(self, time_remaining):
         """updates the time remaining label to show the time remaining"""
         current_player = self.go.current_player
-
+        # Todo: IS THIS UNNECESSARY
         update = "Time Remaining: " + str(time_remaining)
         # self.time_label.setText(update)
         # print('slot ' + update)
@@ -143,7 +149,7 @@ class ScoreBoard(QWidget):
         #TODO: elimiate player from using moves
 
 
-    # TODO: This could be prettier
+    # EVENTS ===========================================
     def paintEvent(self, event):
         """paints the board and the pieces of the game"""
 
