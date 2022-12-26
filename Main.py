@@ -19,7 +19,17 @@ class Main:
         self.current_window.show()
 
     def show_game_screen(self):
-        go = Go(self.player_names)
+        players_name = []
+
+        for player_number, name_field in enumerate(self.current_window.name_input_fields):
+
+            player_name: str = name_field.text()
+            if player_name == '' or player_name.isspace():
+                player_name = "Player " + str(player_number + 1)
+
+            players_name.append(player_name)
+
+        go = Go(players_name)
 
         self.change_current_window(go)
 
@@ -72,12 +82,7 @@ class Main:
         exit(0)
 
     def connect_ws(self):
-        self.current_window.button.clicked.connect(self.getInput)
         self.current_window.button.clicked.connect(self.show_game_screen)
-
-    def getInput(self):
-        for name_field in self.current_window.name_input_fields:
-            self.player_names.append(name_field.text())
 
 
 def main():
