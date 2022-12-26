@@ -72,23 +72,60 @@ class Go(QMainWindow):
         :param piece: The piece to be placed on the board.
         """
 
+        board_before_move = self.board.get_current_state()
+
         # Check if the move is valid
         if not self.board.is_move_valid(piece.row, piece.column, self.current_player):
             print("Invalid Move")
             return
 
-        # Add current state of the board to the undo stack
-        self.undo_stack.append((self.board.get_current_state(), self.current_player))
-
         self.board.place_piece(piece, self.current_player)
 
         self.board.capture_surrounding_pieces(piece)
+
+        # Check for Ko situation
+        if self.is_ko_situation(piece.row, piece.column):
+            # If it's a Ko situation we inform the user and reset the board to its state before the move
+            print("Invalid move, Ko situation")
+            self.board.load_state(board_before_move)
+            return
+
+        # Add the board state at the beginning of the turn to the undo stack
+        self.undo_stack.append((board_before_move, self.current_player))
 
         # Empties the redo_stack if there was anything on there
         if self.redo_stack:
             self.redo_stack[:] = []
 
         self.next_turn()
+
+    def is_ko_situation(self, move_row, move_column):
+
+        # Check if there has been a previous state, if not then it's not a ko situation
+        if not self.undo_stack:
+            return False
+
+        # We get the new proposed board state
+        new_board_state = self.board.get_current_state()
+
+        number_of_turns = len(self.undo_stack)
+        # if this is true that means that this is the first turn of the current player, therefore Ko is impossible
+        if number_of_turns < self.num_players:
+            return False
+
+        # Now get the board state at the end of the current player last turn
+        previous_board_state = self.undo_stack[number_of_turns - self.num_players + 1][0]
+
+        # If at the player move is not retaking a square he lost since the previous turn we return false
+        if new_board_state[move_row][move_column] != previous_board_state[move_row][move_column]:
+            return False
+
+        # Now if the move doesn't result in a repeat of previous game state we return false
+        if new_board_state != previous_board_state:
+            return False
+
+        # Now if it repeats a previous board state we return true
+        return True
 
     def undo_move(self):
         """
