@@ -82,7 +82,7 @@ class Board(QFrame):  # base the board on a QFrame widget
     def get_current_state(self):
         return copy.deepcopy(self.board_array)
 
-    def is_move_valid(self, x, y, player):
+    def is_move_valid(self, row, column, player):
         """
         Checks if a move is valid in the game of Go.
 
@@ -90,13 +90,13 @@ class Board(QFrame):  # base the board on a QFrame widget
         according to the rules of Go. The move is considered valid if it does not result in self-capture of the group,
         if it captures an enemy group, or if it is adjacent to an empty space.
 
-        :param x: The x coordinate of the move.
-        :param y: The y coordinate of the move.
+        :param row: The x coordinate of the move.
+        :param column: The y coordinate of the move.
         :param player: The player making the move.
         :return: True if the move is valid, False otherwise.
         """
 
-        test_piece = self.pieces_array[x][y]
+        test_piece = self.pieces_array[row][column]
 
         # if the test_piece is already set to a player the move is not valid
         if test_piece.player != 0:
