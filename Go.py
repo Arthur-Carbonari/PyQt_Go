@@ -9,17 +9,17 @@ from ScoreBoard import ScoreBoard
 class Go(QMainWindow):
     player_changed_signal = pyqtSignal(int)  # signal sent when player changed
 
-    def __init__(self, player_names):
+    def __init__(self, player_names, board_size):
         super().__init__()
 
         # TODO: also if timed mode is deactivated count upwards to see how long to make move
         self.is_timed_mode_on = True    # Speed go mode, change this to deactivate game over with timer
         self.game_over = False  # TODO: when true seize all operations, merge it with previous one
 
-        # TODO: will be made more flexible
-        player_names = player_names if len(player_names) != 0 else ["Black", "White"]
+        self.players_names = player_names
+
         self.score_board = ScoreBoard(self, player_names)
-        self.board = Board(self)
+        self.board = Board(self, board_size)
         self.num_players = 2
         self.current_player = 1
 

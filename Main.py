@@ -29,7 +29,9 @@ class Main:
 
             players_name.append(player_name)
 
-        go = Go(players_name)
+        board_size = int(self.current_window.board_size_cbox.currentText())
+
+        go = Go(players_name, board_size)
 
         self.change_current_window(go)
 

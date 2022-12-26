@@ -10,19 +10,18 @@ from Piece import Piece
 class Board(QFrame):  # base the board on a QFrame widget
     click_location_signal = pyqtSignal(str)  # signal sent when there is a new click location
 
-    board_size = 16  # board is 7x7 squares wide
-
     background_path = "./icons/board_background.jpg"
 
-    def __init__(self, go):
+    def __init__(self, go, board_size=16):
         super().__init__(go)
 
         self.go = go
+        self.board_size = board_size
 
         self.is_started = False  # game is not currently started
 
         # Create a 2d int[7][7] array to store the current state of the game
-        self.board_array = [[0 for _ in range(Board.board_size)] for _ in range(Board.board_size)]
+        self.board_array = [[0 for _ in range(self.board_size)] for _ in range(self.board_size)]
         self.pieces_array = []
 
         # Create a layout for the board that will contain the Pieces objects
@@ -32,9 +31,9 @@ class Board(QFrame):  # base the board on a QFrame widget
         self.background = QPixmap(Board.background_path)
 
         # Populate the layout with pieces
-        for row in range(Board.board_size):
+        for row in range(self.board_size):
             piece_row = []
-            for column in range(Board.board_size):
+            for column in range(self.board_size):
                 piece = Piece(self, row, column)
                 piece_row.append(piece)
                 self.pieces_layout.addWidget(piece, row, column)
@@ -64,7 +63,7 @@ class Board(QFrame):  # base the board on a QFrame widget
     def square_size(self):
         """returns the side size of one square in the board"""
 
-        return int(self.contentsRect().width() / (Board.board_size + 1))
+        return int(self.contentsRect().width() / (self.board_size + 1))
 
     def start(self):
         """starts game"""
@@ -168,10 +167,10 @@ class Board(QFrame):  # base the board on a QFrame widget
         square_width = self.square_size()
 
         board_start = square_width
-        board_end = square_width * Board.board_size
+        board_end = square_width * self.board_size
         xy_position: int
 
-        for i in range(1, Board.board_size + 1):
+        for i in range(1, self.board_size + 1):
 
             xy_position = square_width * i
 
@@ -212,7 +211,7 @@ class Board(QFrame):  # base the board on a QFrame widget
 
         # Update the margin of the layout so that the pieces are always at the intersection of the board squares
         space = int(self.square_size() * 0.5)
-        end_space = int(self.width() - space - Board.board_size * self.square_size())
+        end_space = int(self.width() - space - self.board_size * self.square_size())
 
         self.pieces_layout.setContentsMargins(space, space, end_space, end_space)
 
