@@ -117,13 +117,12 @@ class Go(QMainWindow):
         the game.
         The current state of the board and player are then added to the undo stack to allow for future undos.
         """
-
         if not self.redo_stack:
             return
 
         self.undo_stack.append((self.board.get_current_state(), self.current_player))
 
-        board_state, player = self.undo_stack.pop()
+        board_state, player = self.redo_stack.pop()
         self.board.load_state(board_state)
         self.current_player = player
 
