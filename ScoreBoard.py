@@ -118,11 +118,11 @@ class ScoreBoard(QWidget):
         # when the click_location_signal is emitted in board the setClickLocation slot receives it
         board.click_location_signal.connect(self.set_click_location)
         # initiate undo move method
-        self.undo_btn.clicked.connect(self.go.board.undo_move)
+        self.undo_btn.clicked.connect(self.go.undo_move)
         # initiate skip turn method
         # self.skip_btn.clicked.connect(self.go.board)  #TODO: waiting skip turn logic
         # initiate redo move method
-        self.redo_btn.clicked.connect(self.go.board.redo_move)
+        self.redo_btn.clicked.connect(self.go.redo_move)
 
     @pyqtSlot(str)  # checks to make sure that the following slot is receiving an argument of the type 'int'
     def set_click_location(self, click_loc):
