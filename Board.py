@@ -181,16 +181,15 @@ class Board(QFrame):  # base the board on a QFrame widget
             # Draws the columns
             painter.drawLine(xy_position, board_start, xy_position, board_end)
 
-    def load_state(self, board_state: list[list[int]], player_state: int):
+    def load_state(self, board_state: list[list[int]]):
         """
-        Loads the given state into the board and updates the current player.
+        Loads the given state into the board.
 
         This method updates the board to reflect the given state. If a piece is already in the correct position, it is
         not modified. Otherwise, the piece is placed as necessary. The current player of the game is also updated based
         on the given player state.
 
         :param board_state: A 2D list representing the state to be loaded into the board.
-        :param player_state: An integer representing whose turn it was at that board state.
         """
 
         for row, board_row in enumerate(board_state):
