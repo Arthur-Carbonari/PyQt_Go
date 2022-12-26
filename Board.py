@@ -73,14 +73,16 @@ class Board(QFrame):  # base the board on a QFrame widget
         """starts game"""
 
         self.is_started = True  # set the boolean which determines if the game has started to TRUE
-        self.reset_game()  # reset the game
+        self.reset()  # reset the game
         self.go.score_board.start()
         print("start () - timer is started")
 
-    def reset_game(self):
+    def reset(self):
         """clears pieces from the board"""
 
-        # TODO write code to reset game
+        [[self.place_piece(piece, 0) for piece in piece_row] for piece_row in self.pieces_array]
+        self.undo_stack = []
+        self.redo_stack = []
 
     def is_move_valid(self, x, y, player):
         """
@@ -277,7 +279,6 @@ class Board(QFrame):  # base the board on a QFrame widget
         end_space = int(self.width() - space - Board.board_size * self.square_size())
 
         self.pieces_layout.setContentsMargins(space, space, end_space, end_space)
-
 
     def paintEvent(self, event):
         """paints the board and the pieces of the game"""
