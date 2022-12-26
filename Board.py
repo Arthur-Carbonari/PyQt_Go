@@ -25,9 +25,6 @@ class Board(QFrame):  # base the board on a QFrame widget
         self.board_array = [[0 for _ in range(Board.board_size)] for _ in range(Board.board_size)]
         self.pieces_array = []
 
-        self.undo_stack = []
-        self.redo_stack = []
-
         # Create a layout for the board that will contain the Pieces objects
         self.pieces_layout = QGridLayout(self)
         self.pieces_layout.setSpacing(0)
@@ -81,8 +78,9 @@ class Board(QFrame):  # base the board on a QFrame widget
         """clears pieces from the board"""
 
         [[self.place_piece(piece, 0) for piece in piece_row] for piece_row in self.pieces_array]
-        self.undo_stack = []
-        self.redo_stack = []
+
+    def get_current_state(self):
+        return copy.deepcopy(self.board_array)
 
     def is_move_valid(self, x, y, player):
         """
@@ -145,16 +143,6 @@ class Board(QFrame):  # base the board on a QFrame widget
             if enemy_group_liberty == 0:
                 [self.place_piece(piece, 0) for piece in enemy_group]
 
-        # self.print_board_array()
-        # print("------------------------------")
-        # self.print_piece_array()
-
-        # Empties the redo_stack if there was anything on there
-        if self.redo_stack:
-            self.redo_stack[:] = []
-
-        self.go.next_turn()
-
     def print_piece_array(self):
 
         print("Pieces array:")
@@ -214,38 +202,6 @@ class Board(QFrame):  # base the board on a QFrame widget
                 self.pieces_array[row][column].place_piece(value)
 
         self.board_array = board_state
-        self.go.current_player = player_state
-
-    def undo_move(self):
-        """
-        Undoes the last move made in the game.
-
-        This method retrieves the last state of the board and current player from the undo stack and loads it into the
-        game.
-        If the undo stack is empty, this method does nothing. The state that is undone is also added to the redo stack
-        for potential future use.
-        """
-
-        if not self.undo_stack:
-            return
-
-        self.redo_stack.append((copy.deepcopy(self.board_array), self.go.current_player))
-        self.load_state(*self.undo_stack.pop())
-
-    def redo_move(self):
-        """
-        Redoes the previous move that was undone.
-
-        This method retrieves the state of the board and current player from the top of the redo stack and applies it to
-        the game.
-        The current state of the board and player are then added to the undo stack to allow for future undos.
-        """
-
-        if not self.redo_stack:
-            return
-
-        self.undo_stack.append((copy.deepcopy(self.board_array), self.go.current_player))
-        self.load_state(*self.redo_stack.pop())
 
     # EVENTS ===========================================
 

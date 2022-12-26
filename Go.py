@@ -26,6 +26,9 @@ class Go(QMainWindow):
         self.num_players = 2
         self.current_player = 1
 
+        self.undo_stack = []
+        self.redo_stack = []
+
         self.setMenuBar(GameMenuBar(self).init_menu())
 
         self.init_ui()
@@ -87,6 +90,43 @@ class Go(QMainWindow):
 
         self.next_turn()
 
+    def undo_move(self):
+        """
+        Undoes the last move made in the game.
+
+        This method retrieves the last state of the board and current player from the undo stack and loads it into the
+        game.
+        If the undo stack is empty, this method does nothing. The state that is undone is also added to the redo stack
+        for potential future use.
+        """
+
+        if not self.undo_stack:
+            return
+
+        self.redo_stack.append((self.board.get_current_state(), self.current_player))
+
+        board_state, player = self.undo_stack.pop()
+        self.board.load_state(board_state)
+        self.current_player = player
+
+    def redo_move(self):
+        """
+        Redoes the previous move that was undone.
+
+        This method retrieves the state of the board and current player from the top of the redo stack and applies it to
+        the game.
+        The current state of the board and player are then added to the undo stack to allow for future undos.
+        """
+
+        if not self.redo_stack:
+            return
+
+        self.undo_stack.append((self.board.get_current_state(), self.current_player))
+
+        board_state, player = self.undo_stack.pop()
+        self.board.load_state(board_state)
+        self.current_player = player
+
     def finish_game(self):
         self.game_over = True  # GAME OVER
 
@@ -105,7 +145,7 @@ class Go(QMainWindow):
             return
 
         # If this is false that means that no move has been made so no need to reset the board
-        if self.board.undo_stack:
+        if self.undo_stack:
             self.board.reset()
 
         # reset the score board
@@ -136,12 +176,12 @@ class GameMenuBar(MenuBar):
         # Undo Action
         self.undo_action = QAction(QIcon("./icons/save.png"), "Undo Move", game_window)
         self.undo_action.setShortcut("Ctrl+Z")
-        self.undo_action.triggered.connect(game_window.board.undo_move)
+        self.undo_action.triggered.connect(game_window.undo_move)
 
         # Redo Action
         self.redo_action = QAction(QIcon("./icons/save.png"), "Redo Move", game_window)
         self.redo_action.setShortcut("Ctrl+Y")
-        self.redo_action.triggered.connect(game_window.board.redo_move)
+        self.redo_action.triggered.connect(game_window.redo_move)
 
     def init_menu(self):
         # Add menus to menu bar
