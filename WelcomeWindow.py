@@ -120,6 +120,7 @@ class WelcomeScreen(QMainWindow):
         layout.addWidget(QLabel("Board size: "))
         # populate combo box
         self.board_size_cbox.addItems(self.board_sizes)
+        self.board_size_cbox.setCurrentIndex(3)
         # add combo box to line
         layout.addWidget(self.board_size_cbox)
 
