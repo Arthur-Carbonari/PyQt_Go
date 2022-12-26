@@ -162,7 +162,7 @@ class GameMenuBar(MenuBar):
         # GAME MENU
 
         # Reset Game Action
-        self.reset_game_action = QAction(QIcon("./icons/save.png"), "Load Game", game_window)
+        self.reset_game_action = QAction(QIcon("./icons/save.png"), "Reset Game", game_window)
         self.reset_game_action.setShortcut("Ctrl+R")
         self.reset_game_action.triggered.connect(game_window.reset_game)
 
