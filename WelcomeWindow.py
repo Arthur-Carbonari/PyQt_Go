@@ -1,7 +1,7 @@
 from PyQt6.QtCore import Qt, QPoint
 from PyQt6.QtGui import QPainter, QPixmap, QFont
 from PyQt6.QtWidgets import QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QFrame, QLineEdit, QMainWindow, QRadioButton, \
-    QComboBox
+    QComboBox, QSpinBox
 
 from MenuBar import MenuBar
 
@@ -30,7 +30,7 @@ class WelcomeScreen(QMainWindow):
         # items that will be used later
         self.name_input_box = QVBoxLayout()         # player name box
         self.name_input_fields = []                 # storage for QLineEdits
-        self.player_option_cbox = QComboBox()       # number of players comboBox
+        self.player_spinbox = QSpinBox()            # number of players comboBox
         self.board_size_cbox = QComboBox()          # board size comboBox
         self.mode = QRadioButton()                  # game mode radioButton
         self.button = QPushButton("Start Game")     # start game button
@@ -128,12 +128,14 @@ class WelcomeScreen(QMainWindow):
         layout = QHBoxLayout()
         # create label and add to line
         layout.addWidget(QLabel("Number of players: "))
-        # populate combo box
-        self.player_option_cbox.addItems(self.player_options)
+        # set range of spinbox
+        # self.player_spinbox.setValue(2)
+        self.player_spinbox.setMinimum(2)
+        self.player_spinbox.setMaximum(4)
         # connect to set_number_of_players method
-        self.player_option_cbox.currentIndexChanged.connect(self.set_number_of_players)
+        self.player_spinbox.valueChanged.connect(self.set_number_of_players)
         # add combo box to line
-        layout.addWidget(self.player_option_cbox)
+        layout.addWidget(self.player_spinbox)
 
         return layout
 
@@ -186,9 +188,9 @@ class WelcomeScreen(QMainWindow):
         """sets current player with change of dropbox"""
         # player name count
         self.delete_name_input_lines()
-        self.player_count = int(self.sender().currentText())
+        self.player_count = int(self.sender().value())
         self.add_name_input_lines()
-
+        # TODO delete
         # mode
         # if self.sender().isChecked():
         #     print(self.sender().value)

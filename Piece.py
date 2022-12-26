@@ -9,8 +9,9 @@ class Piece(QPushButton):
     # White = 2
 
     piece_colors = ["#0000", "#000", "#fff"]
-
-    piece_icons_paths = ["./icons/empty.png", "icons/player_1_piece.png", "icons/player_2_piece.png"]
+    # TODO FIND ICONS
+    piece_icons_paths = ["./icons/empty.png", "icons/player_1_piece.png", "icons/player_2_piece.png",
+                         "icons/player_2_piece.png", "icons/player_2_piece.png"]
 
     def __init__(self, board, row, column):  # constructor
         super().__init__()
