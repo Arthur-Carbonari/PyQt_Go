@@ -1,5 +1,5 @@
-from PyQt6.QtCore import Qt, QPoint
-from PyQt6.QtGui import QPainter, QPixmap, QFont, QIcon
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QFont, QIcon
 from PyQt6.QtWidgets import QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QFrame, QLineEdit, QMainWindow, \
     QRadioButton, QComboBox, QSpinBox, QButtonGroup
 
@@ -11,6 +11,12 @@ class WelcomeScreen(QMainWindow):
     Main = None
 
     def __init__(self):
+        """
+        Initializes a WelcomeScreen object. This is the main menu of the Pokemon Go game, where the user can select
+        the number of players, their names, the board size, and the game mode. The menu also includes a Start Game button
+        that will start the game when clicked.
+        """
+
         super().__init__()
 
         self.setWindowIcon(QIcon("./icons/pokeball.png"))
@@ -68,7 +74,17 @@ class WelcomeScreen(QMainWindow):
         self.setMinimumWidth(int(screen.width() * 0.8))
         self.setMinimumHeight(int(screen.height() * 0.88))
 
-    def create_main_layout(self):
+    def create_main_layout(self) -> QVBoxLayout:
+        """
+        Creates and returns the main layout for the WelcomeScreen widget.
+
+        The main layout consists of a header label, a line for selecting the number of players,
+        lines for inputting player names, a line for selecting the board size, a line for selecting
+        the game mode, and a start game button.
+
+        :return: main layout for WelcomeScreen widget (QVBoxLayout)
+        """
+
         main_layout = QVBoxLayout()
 
         # HEADER LINES
@@ -126,6 +142,13 @@ class WelcomeScreen(QMainWindow):
         return main_layout
 
     def create_board_size_line(self):
+        """
+        Creates a horizontal layout containing a label and a combo box for selecting the size of the game board.
+
+        :return: QHBoxLayout -- a horizontal layout containing the label and combo box for selecting the size of the
+        game board
+        """
+
         # create line layout
         layout = QHBoxLayout()
         # label
@@ -138,6 +161,15 @@ class WelcomeScreen(QMainWindow):
         return layout
 
     def create_number_of_players_line(self):
+        """
+        This method creates a horizontal layout containing a label and a spinbox for selecting the number of players.
+        The spinbox has a range of allowed values defined in the Settings.MIN_NUMBER_OF_PLAYERS and
+        Settings.MAX_NUMBER_OF_PLAYERS constants. The method also connects the change_number_of_players method to the
+        valueChanged signal of the spinbox.
+
+        :param: none
+        :return: QHBoxLayout
+        """
         # create line layout
         layout = QHBoxLayout()
         # create label and add to line
@@ -153,6 +185,12 @@ class WelcomeScreen(QMainWindow):
         return layout
 
     def create_game_mode_line(self):
+        """
+        Creates a horizontal layout containing a label and radio buttons for selecting game mode.
+
+        :return: QHBoxLayout -- layout containing the label and radio buttons
+        """
+
         # create layout
         layout = QHBoxLayout()
         # label
@@ -162,6 +200,10 @@ class WelcomeScreen(QMainWindow):
         return layout
 
     def add_name_input_lines(self):
+        """
+        Adds a line of player name input field to the WelcomeScreen.
+        :param self: reference to the WelcomeScreen object
+        """
 
         for player in range(self.player_count):
             # create a line layout
@@ -179,6 +221,11 @@ class WelcomeScreen(QMainWindow):
             self.name_input_box.addLayout(player_layout)
 
     def delete_name_input_lines(self):
+        """
+        Deletes all the player name input lines and clears the list that stores them.
+        This method is called when the number of players changes and the number of input lines needs to be updated.
+        """
+
         for i in range(1, self.player_count + 1):
             # get the last layout inside the VBox
             item = self.name_input_box.itemAt(self.name_input_box.count() - i)
