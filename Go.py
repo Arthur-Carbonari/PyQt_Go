@@ -81,6 +81,9 @@ class Go(QMainWindow):
         :param piece: The piece to be placed on the board.
         """
 
+        if self.game_over:
+            return
+
         board_before_move = self.board.get_current_state()
 
         # Check if the move is valid
@@ -90,7 +93,7 @@ class Go(QMainWindow):
 
         self.board.place_piece(piece, self.current_player)
 
-        self.board.capture_surrounding_pieces(piece)
+        pieces_captured = self.board.capture_surrounding_pieces(piece)
 
         # Check for Ko situation
         if self.is_ko_situation(piece.row, piece.column):
@@ -105,6 +108,14 @@ class Go(QMainWindow):
         # Empties the redo_stack if there was anything on there
         if self.redo_stack:
             self.redo_stack[:] = []
+
+        # Updates the score board
+        self.players_captured_pieces[self.current_player - 1] += pieces_captured
+        self.score_board.update_player_capture(self.current_player,
+                                               self.players_captured_pieces[self.current_player - 1])
+
+        # Resets the pass turn counter
+        self.pass_turn_counter = 0
 
         self.next_turn()
 
