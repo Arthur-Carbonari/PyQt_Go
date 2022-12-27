@@ -46,9 +46,6 @@ class Board(QFrame):  # base the board on a QFrame widget
 
     def init_board(self):
         """initiates board"""
-
-        self.start()  # start the game which will start the timer
-
         self.print_board_array()
 
     def print_board_array(self):
@@ -64,14 +61,6 @@ class Board(QFrame):  # base the board on a QFrame widget
         """returns the side size of one square in the board"""
 
         return int(self.contentsRect().width() / (self.board_size + 1))
-
-    def start(self):
-        """starts game"""
-
-        self.is_started = True  # set the boolean which determines if the game has started to TRUE
-        self.reset()  # reset the game
-        self.go.score_board.start()
-        print("start () - timer is started")
 
     def reset(self):
         """clears pieces from the board"""
