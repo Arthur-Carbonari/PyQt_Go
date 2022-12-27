@@ -185,6 +185,10 @@ class Go(QMainWindow):
 
     def finish_game(self):
         self.game_over = True  # GAME OVER
+        print("game over")
+        # TODO: Calculate final points by territory
+        # TODO: Display game over message
+        # TODO: Highlight winner
 
     def save_game(self):
         filename, _ = QFileDialog.getSaveFileName(self, "Save File", "", "Pickle File (*.pkl)")
