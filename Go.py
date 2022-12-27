@@ -28,15 +28,18 @@ class Go(QMainWindow):
                                 background-position: bottom right;
                                     }
                             """)
+
         self.game_over = False
         self.num_players = len(player_names)
         self.players_names = player_names
-        self.players_scores = [0] * self.num_players
+        self.players_scores = self.get_initial_scores()
         self.current_player = 1
         self.pass_turn_counter = 0
 
         self.board = Board(self, board_size)
+
         self.score_board = ScoreBoard(self, player_names)
+        self.set_score_board(self.players_scores)
 
         self.undo_stack = []
         self.redo_stack = []
@@ -61,6 +64,9 @@ class Go(QMainWindow):
         self.setMinimumHeight(int(screen.height() * 0.88))
 
         self.setWindowTitle('Go')
+
+    def get_initial_scores(self):
+        return [round((i != 0) * 7.5 / (2 ** (self.num_players - i - 1)), 2) for i in range(self.num_players)]
 
     def set_player_turn(self, player: int):
         if self.game_over:
@@ -234,7 +240,7 @@ class Go(QMainWindow):
 
         game = self.to_dictionary()
 
-        with open(filename, "wb",) as file:
+        with open(filename, "wb", ) as file:
             pickle.dump(game, file)
 
     def reset_game(self):
@@ -253,7 +259,7 @@ class Go(QMainWindow):
     def reset(self):
         self.game_over = False
         self.pass_turn_counter = 0
-        self.players_scores = [0] * self.num_players
+        self.players_scores = self.get_initial_scores()
 
         self.undo_stack = []
         self.redo_stack = []
