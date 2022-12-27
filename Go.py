@@ -179,7 +179,6 @@ class Go(QMainWindow):
             QToolTip.showText(QCursor.pos(), "Invalid Move: Self capture is not allowed")
             return
 
-        print("current player", self.current_player)
         self.board.place_piece(piece, self.current_player)
 
         pieces_captured = self.board.capture_surrounding_pieces(piece)
