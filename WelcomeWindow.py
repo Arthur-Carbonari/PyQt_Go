@@ -30,12 +30,12 @@ class WelcomeScreen(QMainWindow):
 
         # Set background color of WelcomeScreen
         self.setObjectName("WelcomeScreen")
-        self.setStyleSheet("""
-                            WelcomeScreen#WelcomeScreen{
-                                background-image: url(./icons/welcome_background.png);
+        self.setStyleSheet(f"""
+                            WelcomeScreen#WelcomeScreen{{
+                                background-image: url({Settings.WELCOME_BACKGROUND});
                                 background-size: cover;
                                 background-position: bottom right;
-                            }
+                            }}
                             """)
 
         main_widget.setStyleSheet("""background-color: rgba(0, 0, 0, 0.4);""")
