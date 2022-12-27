@@ -11,8 +11,6 @@ from Settings import Settings
 class Board(QFrame):  # base the board on a QFrame widget
     click_location_signal = pyqtSignal(str)  # signal sent when there is a new click location
 
-    background_path = "./icons/board_background.jpg"
-
     def __init__(self, go, board_size=16):
         super().__init__(go)
 
@@ -29,7 +27,7 @@ class Board(QFrame):  # base the board on a QFrame widget
         self.pieces_layout = QGridLayout(self)
         self.pieces_layout.setSpacing(0)
 
-        self.background = QPixmap(Board.background_path)
+        self.background = QPixmap(Settings.board_background)
 
         # Populate the layout with pieces
         for row in range(self.board_size):
@@ -284,6 +282,10 @@ class Board(QFrame):  # base the board on a QFrame widget
             pass
 
         return owner, territory
+
+    def update_background_image(self):
+        self.background = QPixmap(Settings.board_background)
+        self.update()
 
     # EVENTS ===========================================
 

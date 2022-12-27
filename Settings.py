@@ -11,10 +11,12 @@ class Settings:
     GAME_MODES = tuple(GameMode)
     MIN_NUMBER_OF_PLAYERS = 2
     MAX_NUMBER_OF_PLAYERS = 4
-    BOARD_SIZES = ["16", "13", "9", "7"]
 
     TIMER_START = 10
     TIMER_SPEED = 1000
+
+    BOARD_SIZES = ["16", "13", "9", "7"]
+    board_background = "./icons/board_background.jpg"
 
     PIECE_COLORS = [
         "#0000",
@@ -23,7 +25,6 @@ class Settings:
         "#8B0000",
         "#0000FF"
     ]
-
 
     PIECE_ICONS_PATHS = [
         "./icons/empty.png",

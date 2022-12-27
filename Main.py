@@ -94,7 +94,12 @@ class Main:
         self.change_current_window(new_game)
 
     def change_board_background(self):
-        print("Change board background")
+        file_name, _ = QFileDialog.getOpenFileName(self.current_window, "Open File", "", "Image File (*.jpg)")
+
+        Settings.board_background = file_name
+
+        if isinstance(self.current_window, Go):
+            self.current_window.board.update_background_image()
 
     def show_help_dialog(self):
         print("Show help dialog")
