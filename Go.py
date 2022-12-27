@@ -48,8 +48,6 @@ class Go(QMainWindow):
         main_layout.addWidget(self.board, 9)
         main_layout.addWidget(self.score_board, 2)
 
-        self.score_board.make_connection()
-
         screen = self.screen().availableGeometry()
 
         self.setMinimumWidth(int(screen.width() * 0.8))
