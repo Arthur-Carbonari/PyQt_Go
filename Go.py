@@ -57,7 +57,7 @@ class Go(QMainWindow):
 
     def next_turn(self):
         self.current_player = (self.current_player % self.num_players) + 1
-        self.score_board.change_player(self.current_player)
+        self.score_board.next_turn()
 
     def pass_turn(self):
         self.pass_turn_counter += 1
@@ -164,6 +164,9 @@ class Go(QMainWindow):
         self.board.load_state(board_state)
         self.current_player = player
 
+        if not self.game_over:
+            self.score_board.set_turn_player(self.current_player)
+
     def redo_move(self):
         """
         Redoes the previous move that was undone.
@@ -181,12 +184,15 @@ class Go(QMainWindow):
         self.board.load_state(board_state)
         self.current_player = player
 
+        if not self.game_over:
+            self.score_board.next_turn()
+
     def finish_game(self):
         self.game_over = True  # GAME OVER
         print("game over")
         # TODO: Calculate final points by territory
         # TODO: Display game over message
-        # TODO: Highlight winner
+        self.score_board.highlight_winner(1)
 
     def save_game(self):
         filename, _ = QFileDialog.getSaveFileName(self, "Save File", "", "Pickle File (*.pkl)")

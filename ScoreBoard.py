@@ -80,9 +80,53 @@ class ScoreBoard(QWidget):
     def reset(self):
         [player_box.reset() for player_box in self.players_boxes]
 
-    def change_player(self, player_no):
+    def next_turn(self):
+        last_turns_player = self.players_boxes_layout.itemAt(0).widget()
+        last_turns_player.setStyleSheet('')
+        self.players_boxes_layout.removeWidget(last_turns_player)
+        self.players_boxes_layout.addWidget(last_turns_player)
+
+        self.players_boxes_layout.itemAt(0).widget().setStyleSheet(Settings.CURRENT_PLAYER_STYLESHEET)
+
+    def set_turn_player(self, player_number: int):
         """changes current player"""
-        # TODO: UPDATE WHEEL
+        player_index = player_number - 1
+        self.players_boxes_layout.itemAt(0).widget().setStyleSheet("")
+
+        [self.players_boxes_layout.removeWidget(player_box) for player_box in self.players_boxes_layout.children()]
+
+        new_player_order = self.players_boxes[player_index:] + self.players_boxes[:player_index]
+        [self.players_boxes_layout.addWidget(player_box) for player_box in new_player_order]
+
+        new_player_order[0].setStyleSheet(Settings.CURRENT_PLAYER_STYLESHEET)
+
+        # effect = QGraphicsDropShadowEffect()
+        # effect.setColor(QColor(255, 255, 0))  # Set the color to yellow
+        # effect.setBlurRadius(10)  # Set the intensity of the glow
+        # first_widget.setGraphicsEffect(effect)
+
+    def highlight_winner(self, winner_player: int):
+
+        self.set_turn_player(winner_player)
+
+        for player_box in self.players_boxes:
+            player_box.setObjectName("loser")
+
+        self.players_boxes[winner_player - 1].setObjectName("winner")
+
+        for player_box in self.players_boxes:
+            player_box.setStyleSheet("""
+                PlayerBox#loser{
+                    border: 2px solid #8B0000;
+                    border-radius: 5px;
+                    box-shadow: 0 0 10px #8B0000;
+                }
+                PlayerBox#winner{
+                    border: 2px solid #0000FF;
+                    border-radius: 5px;
+                    box-shadow: 0 0 10px #0000FF;
+                }
+        """)
 
     # EVENTS ===========================================
     def paintEvent(self, event):
