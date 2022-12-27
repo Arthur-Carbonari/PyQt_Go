@@ -1,7 +1,8 @@
 from PyQt6.QtGui import QPixmap, QPainter, QIcon, QFont
 from PyQt6.QtWidgets import QVBoxLayout, QLabel, QWidget, QHBoxLayout, QPushButton, QGroupBox
-from PyQt6.QtCore import pyqtSlot, QPoint
+from PyQt6.QtCore import QPoint
 from Piece import Piece
+from Settings import Settings
 
 
 class ScoreBoard(QWidget):
@@ -15,6 +16,8 @@ class ScoreBoard(QWidget):
         self.number_of_players = len(players_names)
 
         self.players_boxes = [PlayerBox(self, i, name) for i, name in enumerate(players_names)]
+        self.players_boxes_layout = QVBoxLayout()
+        [self.players_boxes_layout.addWidget(widget) for widget in self.players_boxes]
 
         self.undo_btn = QPushButton("Undo")
         self.undo_btn.clicked.connect(go.undo_move)
@@ -30,13 +33,7 @@ class ScoreBoard(QWidget):
     def init_ui(self):
         """initiates ScoreBoard UI"""
 
-        self.setStyleSheet("QGroupBox{border: 1px solid black;}")
-        self.setStyleSheet("""
-        background-color: rgba(0, 0, 0, 0.6);
-        color: white;
-        """)
-
-        wrapper_layout = QVBoxLayout(self)
+        self.setStyleSheet(Settings.SCORE_BOARD_STYLESHEET)
 
         main_group_box = QGroupBox(self)
         main_layout = QVBoxLayout(main_group_box)
@@ -55,25 +52,19 @@ class ScoreBoard(QWidget):
         main_layout.addLayout(buttons_box, 1)
         main_layout.addStretch(1)
 
-        wrapper_layout.addWidget(main_group_box)
-        wrapper_layout.setContentsMargins(0, 0, 0, 0)
-
-        self.setLayout(wrapper_layout)
+        main_wrapper_layout = QVBoxLayout(self)
+        main_wrapper_layout.addWidget(main_group_box)
+        main_wrapper_layout.setContentsMargins(0, 0, 0, 0)
 
     def create_players_boxes(self):
         group_box = QGroupBox(self)
 
-        player_boxes_layout = QVBoxLayout()
-        player_boxes_layout.addStretch(1)
-        [player_boxes_layout.addWidget(player_box) for player_box in self.players_boxes]
-        player_boxes_layout.addStretch(3)
+        inner_wrapper_layout = QVBoxLayout()
+        inner_wrapper_layout.addStretch(1)
+        inner_wrapper_layout.addLayout(self.players_boxes_layout)
+        inner_wrapper_layout.addStretch(3)
 
-        wrapper_layout = QHBoxLayout()
-        wrapper_layout.addStretch(1)
-        wrapper_layout.addLayout(player_boxes_layout, 20)
-        wrapper_layout.addStretch(1)
-
-        group_box.setLayout(wrapper_layout)
+        group_box.setLayout(inner_wrapper_layout)
 
         return group_box
 
