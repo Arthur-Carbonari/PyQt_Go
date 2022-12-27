@@ -217,17 +217,23 @@ class Go(QMainWindow):
 
     def finish_game(self):
         self.game_over = True  # GAME OVER
-        print("game over")
-        # TODO: Calculate final points by territory
-        # TODO: Display game over message
+
         controlled_territories = self.board.get_controlled_territories()
         winner = 0
-        for i in range(1, self.num_players+1):
-            print("player ", i, ": ", len(controlled_territories[i]), " -- pieces: ", self.players_scores[i-1])
-            # if there is a draw last player to play wins
-            if winner < len(controlled_territories[i]) + self.players_scores[i-1]:
-                winner = i
-        self.score_board.highlight_winner(winner)
+        for player_number in range(1, self.num_players+1):
+            self.players_scores[player_number - 1] += len(controlled_territories[player_number])
+            self.score_board.update_player_capture(player_number, self.players_scores[player_number - 1])
+            #
+            # if self.players_scores[winner - 1] < self.players_scores[player_number-1]:
+            #     winner = player_number
+
+        self.score_board.display_winner(self.players_scores)
+
+        # TODO: Display game over message
+
+    def to_dictionary(self) -> dict:
+        """
+        Convert the current game state to a dictionary.
 
     def to_dictionary(self):
         return {
