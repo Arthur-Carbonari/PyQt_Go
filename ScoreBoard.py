@@ -1,15 +1,11 @@
-from itertools import cycle
 from PyQt6.QtGui import QPixmap, QPainter, QIcon, QFont
 from PyQt6.QtWidgets import QVBoxLayout, QLabel, QWidget, QHBoxLayout, QPushButton, QGroupBox
-from PyQt6.QtCore import pyqtSlot, QPoint, QBasicTimer
+from PyQt6.QtCore import pyqtSlot, QPoint
 from Piece import Piece
+
 
 class ScoreBoard(QWidget):
     """ base the score_board on a QLabel"""
-
-    timer_speed = 1000  # the timer updates every 1 second
-    # TODO: counter going to be 2 mins = 120,000
-    counter = 10  # the number the counter will count down from
 
     def __init__(self, go, player_names):
         super().__init__()
@@ -110,32 +106,10 @@ class ScoreBoard(QWidget):
         # initiate redo move method
         self.redo_btn.clicked.connect(self.go.redo_move)
 
-    @pyqtSlot(str)  # checks to make sure that the following slot is receiving an argument of the type 'int'
-    def set_click_location(self, click_loc):
-        """updates the label to show the click location"""
-        #Todo: IS THIS UNNECESSARY
-        print('slot ' + click_loc)
-
-    @pyqtSlot(int)
-    def set_time_remaining(self, time_remaining):
-        """updates the time remaining label to show the time remaining"""
-        current_player = self.go.current_player
-        # Todo: IS THIS UNNECESSARY
-        update = "Time Remaining: " + str(time_remaining)
-        # self.time_label.setText(update)
-        # print('slot ' + update)
-        # self.redraw()
-
     def change_player(self, player_no):
         """changes current player"""
         self.current_player = player_no
         # TODO: UPDATE WHEEL
-
-    def eliminate_player(self):
-        """updates scoreboard to show scores and winner"""
-        self.timer_labels[self.current_player].setText("Player Eliminated")
-        #TODO: elimiate player from using moves
-
 
     # EVENTS ===========================================
     def paintEvent(self, event):
