@@ -3,14 +3,12 @@ from PyQt6.QtGui import QPainter, QPixmap, QFont
 from PyQt6.QtWidgets import QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QFrame, QLineEdit, QMainWindow, \
     QRadioButton, QComboBox, QSpinBox, QButtonGroup
 
+from Settings import Settings
 from MenuBar import MenuBar
 
 
 class WelcomeScreen(QMainWindow):
     Main = None
-    player_options = ["2", "3", "4"]
-    board_sizes = ["7", "9", "13", "16"]
-    game_modes = ["Normal Go", "Speed Go"]
 
     def __init__(self):
         super().__init__()
@@ -35,8 +33,9 @@ class WelcomeScreen(QMainWindow):
 
         # Game mode selection button group
         self.game_mode_selection = QButtonGroup()
-        game_mode_radio_buttons = [QRadioButton(game_mode) for game_mode in self.game_modes]
+        game_mode_radio_buttons = [QRadioButton(game_mode.value) for game_mode in Settings.GAME_MODES]
         [self.game_mode_selection.addButton(radio_button, i) for i, radio_button in enumerate(game_mode_radio_buttons)]
+        self.game_mode_selection.button(0).setChecked(True)
 
         self.button = QPushButton("Start Game")         # start game button
         # Create the QFrame and set its size and layout
@@ -123,8 +122,7 @@ class WelcomeScreen(QMainWindow):
         # label
         layout.addWidget(QLabel("Board size: "))
         # populate combo box
-        self.board_size_cbox.addItems(self.board_sizes)
-        self.board_size_cbox.setCurrentIndex(3)
+        self.board_size_cbox.addItems(Settings.BOARD_SIZES)
         # add combo box to line
         layout.addWidget(self.board_size_cbox)
 
@@ -136,9 +134,8 @@ class WelcomeScreen(QMainWindow):
         # create label and add to line
         layout.addWidget(QLabel("Number of players: "))
         # set range of spinbox
-        # self.player_spinbox.setValue(2)
-        self.player_spinbox.setMinimum(2)
-        self.player_spinbox.setMaximum(4)
+        self.player_spinbox.setMinimum(Settings.MIN_NUMBER_OF_PLAYERS)
+        self.player_spinbox.setMaximum(Settings.MAX_NUMBER_OF_PLAYERS)
         # connect to set_number_of_players method
         self.player_spinbox.valueChanged.connect(self.change_number_of_players)
         # add combo box to line
