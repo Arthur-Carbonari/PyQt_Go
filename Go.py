@@ -235,19 +235,18 @@ class Go(QMainWindow):
             self.score_board.update_player_capture(player_number + 1, captured_pieces)
 
     @staticmethod
-    def load_game_from_file(file_name: str):
-
-        if not os.path.exists(file_name):
-            return None
-
-        with open(file_name, "rb") as f:
-            # Load the object from the file
-            game = pickle.load(f)
+    def load_game_from_dictionary(game_object: dict):
 
         # TODO sanitize the game dict to make sure it has all the properties and they are of valid types
-        go = Go(game["players_name"], game["board_size"])
-        go.current_player = game["current_player"]
-        go.board.load_state(game["board_array"])
+        go = Go(game_object["players_names"], game_object["board_size"])
+        go.board.load_state(game_object["board_array"])
+        go.set_score_board(game_object["players_scores"])
+        go.current_player = game_object["current_player"]
+        go.score_board.set_turn_player(go.current_player)
+        go.pass_turn_counter = game_object["pass_turn_counter"]
+
+        if game_object["game_over"]:
+            go.finish_game()
 
         return go
 
