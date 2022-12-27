@@ -62,6 +62,13 @@ class Go(QMainWindow):
 
         self.setWindowTitle('Go')
 
+    def set_player_turn(self, player: int):
+        if self.game_over:
+            return
+
+        self.current_player = player
+        self.score_board.set_turn_player(player)
+
     def next_turn(self):
         if self.game_over:
             return
@@ -175,10 +182,8 @@ class Go(QMainWindow):
 
         board_state, player = self.undo_stack.pop()
         self.board.load_state(board_state)
-        self.current_player = player
 
-        if not self.game_over:
-            self.score_board.set_turn_player(self.current_player)
+        self.set_player_turn(player)
 
     def redo_move(self):
         """
@@ -195,10 +200,8 @@ class Go(QMainWindow):
 
         board_state, player = self.redo_stack.pop()
         self.board.load_state(board_state)
-        self.current_player = player
 
-        if not self.game_over:
-            self.score_board.next_turn()
+        self.set_player_turn(player)
 
     def finish_game(self):
         self.game_over = True  # GAME OVER
@@ -249,7 +252,7 @@ class Go(QMainWindow):
         if self.undo_stack:
             self.board.reset()
 
-        self.current_player = 1
+        self.set_player_turn(1)
         self.score_board.reset()
 
     def set_score_board(self, score):
@@ -263,7 +266,7 @@ class Go(QMainWindow):
         go = Go(game_object["players_names"], game_object["board_size"])
         go.board.load_state(game_object["board_array"])
         go.set_score_board(game_object["players_scores"])
-        go.current_player = game_object["current_player"]
+        go.set_player_turn(game_object["current_player"])
         go.score_board.set_turn_player(go.current_player)
         go.pass_turn_counter = game_object["pass_turn_counter"]
 
@@ -314,7 +317,7 @@ class SpeedGo(Go):
         speed_go = SpeedGo(game_object["players_names"], game_object["board_size"], game_object["remaining_time"])
         speed_go.board.load_state(game_object["board_array"])
         speed_go.set_score_board(game_object["players_scores"])
-        speed_go.current_player = game_object["current_player"]
+        speed_go.set_player_turn(game_object["current_player"])
         speed_go.score_board.set_turn_player(speed_go.current_player)
         speed_go.pass_turn_counter = game_object["pass_turn_counter"]
 
