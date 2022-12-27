@@ -29,8 +29,8 @@ class Settings:
         "./icons/empty.png",
         "icons/player_1_piece.png",
         "icons/player_2_piece.png",
-        "icons/player_2_piece.png",
-        "icons/player_2_piece.png"
+        "icons/player_3_piece.png",
+        "icons/player_4_piece.png"
     ]
 
     # stylesheets ==================================
