@@ -1,7 +1,6 @@
 from PyQt6.QtGui import QPixmap, QPainter, QIcon, QFont
 from PyQt6.QtWidgets import QVBoxLayout, QLabel, QWidget, QHBoxLayout, QPushButton, QGroupBox
 from PyQt6.QtCore import QPoint
-from Piece import Piece
 from Settings import Settings
 
 
@@ -106,17 +105,25 @@ class ScoreBoard(QWidget):
         # effect.setBlurRadius(10)  # Set the intensity of the glow
         # first_widget.setGraphicsEffect(effect)
 
-    def highlight_winner(self, winner_player: int):
+    def display_winner(self, final_score: list[float]):
 
-        self.set_turn_player(winner_player)
+        rank = list()
 
-        for player_box in self.players_boxes:
-            player_box.setObjectName("loser")
+        for player, score in zip(self.players_boxes, final_score):
+            player.set_captured_pieces_label(score)
+            self.players_boxes_layout.removeWidget(player)
+            rank.append([player, score])
+            player.setObjectName("loser")
 
-        self.players_boxes[winner_player - 1].setObjectName("winner")
+        # sort to have the largest score first
+        rank.sort(key=lambda x: - x[1])
 
-        for player_box in self.players_boxes:
-            player_box.setStyleSheet("""
+        rank[0][0].setObjectName("winner")
+
+        for player, _ in rank:
+            self.players_boxes_layout.addWidget(player)
+
+            player.setStyleSheet("""
                 PlayerBox#loser{
                     border: 2px solid #8B0000;
                     border-radius: 5px;
@@ -126,8 +133,7 @@ class ScoreBoard(QWidget):
                     border: 2px solid #0000FF;
                     border-radius: 5px;
                     box-shadow: 0 0 10px #0000FF;
-                }
-        """)
+                }""")
 
     # EVENTS ===========================================
     def paintEvent(self, event):
@@ -183,7 +189,7 @@ class PlayerBox(QGroupBox):
 
         main_layout.addLayout(info_layout)
 
-    def set_captured_pieces_label(self, captured_pieces: int):
+    def set_captured_pieces_label(self, captured_pieces: float):
         self.captured_pieces_label.setText("Captured Pieces: " + str(captured_pieces))
 
     def set_timer_label(self, time: int):
