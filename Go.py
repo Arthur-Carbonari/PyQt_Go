@@ -26,6 +26,8 @@ class Go(QMainWindow):
         self.num_players = 2
         self.current_player = 1
 
+        self.pass_turn_counter = 0
+
         self.undo_stack = []
         self.redo_stack = []
 
@@ -57,9 +59,16 @@ class Go(QMainWindow):
 
     def next_turn(self):
         self.current_player = (self.current_player % self.num_players) + 1
-        self.score_board.change_player(self.current_player - 1)
-        # TODO: dont reset, change it to the next player, the timer will be accumulative it wont reset on turn pass,
-        #  just like in chess
+        self.score_board.change_player(self.current_player)
+
+    def pass_turn(self):
+        self.pass_turn_counter += 1
+
+        if self.pass_turn_counter >= self.num_players:
+            self.finish_game()
+            return
+
+        self.next_turn()
 
     def make_move(self, piece):
         """
