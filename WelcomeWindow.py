@@ -1,7 +1,7 @@
 from PyQt6.QtCore import Qt, QPoint
 from PyQt6.QtGui import QPainter, QPixmap, QFont
-from PyQt6.QtWidgets import QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QFrame, QLineEdit, QMainWindow, QRadioButton, \
-    QComboBox, QSpinBox
+from PyQt6.QtWidgets import QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QFrame, QLineEdit, QMainWindow, \
+    QRadioButton, QComboBox, QSpinBox, QButtonGroup
 
 from MenuBar import MenuBar
 
@@ -28,13 +28,17 @@ class WelcomeScreen(QMainWindow):
         self.background = QPixmap("./icons/welcome_background.jpg")
 
         # items that will be used later
-        self.player_spinbox = QSpinBox()            # number of players comboBox
-        self.name_input_box = QVBoxLayout()         # player name box
-        self.name_input_fields = []                 # storage for QLineEdits
-        self.board_size_cbox = QComboBox()          # board size comboBox
-        self.mode = QRadioButton()                  # game mode radioButton
-        self.button = QPushButton("Start Game")     # start game button
+        self.player_spinbox = QSpinBox()                # number of players comboBox
+        self.name_input_box = QVBoxLayout()             # player name box
+        self.name_input_fields = []                     # storage for QLineEdits
+        self.board_size_cbox = QComboBox()              # board size comboBox
 
+        # Game mode selection button group
+        self.game_mode_selection = QButtonGroup()
+        game_mode_radio_buttons = [QRadioButton(game_mode) for game_mode in self.game_modes]
+        [self.game_mode_selection.addButton(radio_button, i) for i, radio_button in enumerate(game_mode_radio_buttons)]
+
+        self.button = QPushButton("Start Game")         # start game button
         # Create the QFrame and set its size and layout
         self.frame = QFrame(self)
         self.frame.setFixedSize(int(self.width() / 1.7), int(self.height() / 1.5))
@@ -147,14 +151,7 @@ class WelcomeScreen(QMainWindow):
         layout = QHBoxLayout()
         # label
         layout.addWidget(QLabel("Mode: "))
-        # radio buttons
-        for i in range(2):
-            self.mode = QRadioButton(self.game_modes[i])
-            # toggle first option
-            if i == 0: self.mode.toggle()
-            self.mode.value = i
-            self.mode.toggled.connect(self.set_number_of_players)
-            layout.addWidget(self.mode)
+        [layout.addWidget(button) for button in self.game_mode_selection.buttons()]
 
         return layout
 
