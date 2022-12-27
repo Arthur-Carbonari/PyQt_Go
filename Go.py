@@ -1,6 +1,9 @@
+import os.path
+import pickle
+
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtGui import QAction, QIcon, QCursor
-from PyQt6.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QMessageBox, QToolTip
+from PyQt6.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QMessageBox, QToolTip, QFileDialog
 from Board import Board
 from MenuBar import MenuBar
 from ScoreBoard import ScoreBoard
@@ -164,7 +167,19 @@ class Go(QMainWindow):
         self.game_over = True  # GAME OVER
 
     def save_game(self):
-        print("Save the current state of the game to a file")
+        filename, _ = QFileDialog.getSaveFileName(self, "Save File", "", "Pickle File (*.pkl)")
+
+        print(filename)
+
+        game = {
+            "players_name": self.players_names,
+            "current_player": self.current_player,
+            "board_size": self.board.board_size,
+            "board_array": self.board.board_array,
+        }
+
+        with open(filename, "wb",) as file:
+            pickle.dump(game, file)
 
     def reset_game(self):
 
