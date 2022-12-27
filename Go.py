@@ -192,8 +192,9 @@ class Go(QMainWindow):
         controlled_territories = self.board.get_controlled_territories()
         winner = 0
         for i in range(1, self.num_players+1):
-            print("player ", i, ": ", len(controlled_territories[i]))
-            if winner < len(controlled_territories[i]):
+            print("player ", i, ": ", len(controlled_territories[i]), " -- pieces: ", self.players_scores[i-1])
+            # if there is a draw last player to play wins
+            if winner < len(controlled_territories[i]) + self.players_scores[i-1]:
                 winner = i
         self.score_board.highlight_winner(winner)
 
