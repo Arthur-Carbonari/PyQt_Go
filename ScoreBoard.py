@@ -187,6 +187,10 @@ class PlayerBox(QGroupBox):
         self.captured_pieces_label.setText("Captured Pieces: " + str(captured_pieces))
 
     def set_timer_label(self, time: int):
+        if time == 0:
+            self.timer_label.setText("Time: --")
+            return
+
         self.timer_label.setText("Time: " + str(time))
 
     def reset(self):
@@ -196,4 +200,3 @@ class PlayerBox(QGroupBox):
 
     def resizeEvent(self, event) -> None:
         self.setMaximumHeight(int(self.parent().height() * 0.30))
-        # self.setMaximumWidth(300)
