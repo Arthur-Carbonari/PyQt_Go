@@ -95,14 +95,12 @@ class ScoreBoard(QWidget):
         self.remaining_time = [ScoreBoard.counter for _ in self.players_names]
         self.captured_pieces = [0 for _ in self.players_names]
 
-    def make_connection(self, board):
+    def make_connection(self):
         """this handles a signal sent from the board class"""
-        # when the click_location_signal is emitted in board the setClickLocation slot receives it
-        board.click_location_signal.connect(self.set_click_location)
         # initiate undo move method
         self.undo_btn.clicked.connect(self.go.undo_move)
         # initiate skip turn method
-        # self.skip_btn.clicked.connect(self.go.board)  #TODO: waiting skip turn logic
+        self.skip_btn.clicked.connect(self.go.pass_turn)
         # initiate redo move method
         self.redo_btn.clicked.connect(self.go.redo_move)
 
