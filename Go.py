@@ -229,6 +229,39 @@ class Go(QMainWindow):
         return go
 
 
+class SpeedGo(Go):
+
+    def __init__(self, players_names, board_size):
+        super().__init__(players_names, board_size)
+
+        self.timer = QBasicTimer()
+        self.remaining_time = [Settings.TIMER_START] * self.num_players
+        self.timer.start(Settings.TIMER_SPEED, self)
+
+    def finish_game(self):
+        self.timer.stop()
+        super().finish_game()
+
+    # EVENTS ================================================
+
+    def timerEvent(self, event):
+        """this event is automatically called when the timer is updated. based on the timer_speed variable """
+        # if the timer that has 'ticked' is the one in this class
+        if event.timerId() == self.timer.timerId():
+            if self.remaining_time[self.current_player - 1] == 0:
+                self.pass_turn()
+                return
+
+            # update counter and timer label on scoreboard
+            self.remaining_time[self.current_player - 1] -= 1
+            self.score_board.update_player_time(self.current_player, self.remaining_time[self.current_player - 1])
+            # self.timer_labels[self.current_player].setText("Time: " + str(self.remaining_time[self.current_player]))
+            # self.set_time_remaining()
+        else:
+            self.timerEvent(event)  # if we do not handle an event we should pass it to the super
+            # class for handling
+
+
 class GameMenuBar(MenuBar):
 
     def __init__(self, game_window: Go):
