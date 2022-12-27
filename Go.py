@@ -16,20 +16,15 @@ class Go(QMainWindow):
     def __init__(self, player_names: list[str], board_size: int):
         super().__init__()
 
-        # TODO: also if timed mode is deactivated count upwards to see how long to make move
-        self.is_timed_mode_on = True    # Speed go mode, change this to deactivate game over with timer
-        self.game_over = False  # TODO: when true seize all operations, merge it with previous one
-
+        self.game_over = False
+        self.num_players = len(player_names)
         self.players_names = player_names
+        self.players_scores = [0] * self.num_players
+        self.current_player = 1
+        self.pass_turn_counter = 0
 
         self.board = Board(self, board_size)
         self.score_board = ScoreBoard(self, player_names)
-        self.num_players = len(player_names)
-        self.current_player = 1
-
-        self.players_captured_pieces = [0] * self.num_players
-
-        self.pass_turn_counter = 0
 
         self.undo_stack = []
         self.redo_stack = []
