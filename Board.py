@@ -139,6 +139,16 @@ class Board(QFrame):
         return False
 
     def capture_surrounding_pieces(self, piece) -> int:
+        """
+        Captures enemy pieces surrounding the given piece.
+
+        This method captures all enemy pieces that are surrounded by the given piece, by resetting their player value to 0.
+        The method returns the number of pieces captured.
+
+        :param piece: The piece from which to capture enemy pieces.
+        :return: The number of pieces captured.
+        """
+
         pieces_captured = 0
 
         adjacent_enemy_groups = piece.get_adjacent_enemy_groups()
@@ -153,16 +163,16 @@ class Board(QFrame):
 
         return pieces_captured
 
-    def print_piece_array(self):
-
-        print("Pieces array:")
-
-        for row in self.pieces_array:
-            for piece in row:
-                print(piece.player, end="\t")
-            print()
-
     def place_piece(self, piece: Piece, player: int):
+        """
+        Places a piece on the board at the given coordinates.
+
+        This method updates the board_array and the Piece object to reflect the new move.
+
+        :param piece: The Piece object representing the location of the move.
+        :param player: The player making the move.
+        """
+
         # change reference in board_array
         self.board_array[piece.row][piece.column] = player + 1
 
@@ -170,11 +180,24 @@ class Board(QFrame):
         piece.place_piece(player + 1)
 
     def reset_piece(self, piece: Piece):
+        """
+        Resets the given `Piece` object to an empty space.
+
+        This method changes the reference in `self.board_array` to 0 and calls the `place_piece` method of the `Piece`
+        object with an argument of 0, effectively resetting the `Piece` object to an empty space.
+
+        :param piece: The `Piece` object to be reset.
+        """
+
         self.board_array[piece.row][piece.column] = 0
         piece.place_piece(0)
 
     def draw_board_squares(self, painter: QPainter):
-        """draw all the square on the board"""
+        """
+        Draws the gridlines of the board on a QFrame widget.
+
+        :param painter: A QPainter object used to draw on the widget.
+        """
 
         # set the default colour of the brush
         painter.setPen(QPen(Qt.GlobalColor.black, 3))
@@ -216,7 +239,17 @@ class Board(QFrame):
         self.board_array = board_state
 
     def get_controlled_territories(self):
-        """Find the owners and the territories of the whole board"""
+        """
+        Finds the owner and territories of an empty region on the board.
+
+        This method recursively explores an empty region on the board and finds the player that controls it and the coordinates
+        of the region.
+
+        :param x: The x coordinate of the starting point of the region.
+        :param y: The y coordinate of the starting point of the region.
+        :return: A tuple containing the player that controls the region and a set of tuples representing the coordinates of
+        the region.
+        """
 
         territories = {player_no + 1: set()
                        for player_no in range(self.go.num_players)}
@@ -233,7 +266,14 @@ class Board(QFrame):
         return territories
 
     def territory(self, x, y):
-        """Find the owner of given space in board"""
+        """
+        Find the owner of a given space in the board.
+
+        :param x: The x coordinate of the space.
+        :param y: The y coordinate of the space.
+        :return: A tuple containing the owner and the territory of the space. If the space is not controlled by any player,
+        the owner will be 0. The territory is a set of coordinates representing the spaces in the territory.
+        """
 
         def valid_space(x2, y2):
             return 0 <= x2 < self.board_size and 0 <= y2 < self.board_size
@@ -304,6 +344,8 @@ class Board(QFrame):
         return owner, territory
 
     def update_background_image(self):
+        """Updates the background image of the board."""
+
         self.background = QPixmap(Settings.board_background)
         self.update()
 

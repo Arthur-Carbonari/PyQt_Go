@@ -13,8 +13,8 @@ class WelcomeScreen(QMainWindow):
     def __init__(self):
         """
         Initializes a WelcomeScreen object. This is the main menu of the Pokemon Go game, where the user can select
-        the number of players, their names, the board size, and the game mode. The menu also includes a Start Game button
-        that will start the game when clicked.
+        the number of players, their names, the board size, and the game mode. The menu also includes a Start Game
+        button that will start the game when clicked.
         """
 
         super().__init__()

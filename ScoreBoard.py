@@ -139,7 +139,7 @@ class ScoreBoard(QWidget):
         self.background = self.background.scaled(self.width(), self.height())
         painter.drawPixmap(QPoint(), self.background)
 
-    def update_player_capture(self, player_id: int, captured_pieces_total: int):
+    def update_player_capture(self, player_id: int, captured_pieces_total: float):
         self.players_boxes[player_id].set_captured_pieces_label(captured_pieces_total)
 
     def update_player_time(self, player_id: int, remaining_time: int):

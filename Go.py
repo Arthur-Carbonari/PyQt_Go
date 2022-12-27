@@ -1,18 +1,45 @@
 import pickle
 
 from PyQt6.QtCore import QBasicTimer
-from PyQt6.QtGui import QAction, QIcon, QCursor
+from PyQt6.QtGui import QIcon, QCursor
 from PyQt6.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QMessageBox, QToolTip, QFileDialog
 from Board import Board
-from MenuBar import MenuBar
+from MenuBar import GameMenuBar
 from ScoreBoard import ScoreBoard
 from Settings import Settings, GameMode
 
 
 class Go(QMainWindow):
+    """A class representing a game of Go.
+
+    This class manages the game of Go, including the board, players, and score. It also handles UI elements such as the
+    score board and menu bar.
+
+    Attributes:
+        GAME_MODE: A class attribute representing the game mode (normal or speed).
+        game_over: A boolean indicating whether the game has ended.
+        num_players: An integer representing the number of players in the game.
+        players_names: A list of strings representing the names of the players.
+        players_scores: A list of floats representing the scores of the players.
+        current_player: An integer representing the index of the current player.
+        pass_turn_counter: An integer representing the number of consecutive turns that have been passed.
+        board: An instance of the `Board` class representing the game board.
+        score_board: An instance of the `ScoreBoard` class representing the score board UI element.
+        undo_stack: A list of board states representing the board states that can be undone.
+        redo_stack: A list of board states representing the board states that can be redone.
+
+    """
+
     GAME_MODE: GameMode = GameMode.NORMAL
 
     def __init__(self, player_names: list[str], board_size: int):
+        """
+        Initializes the game by setting up the players, the board, the score board, and the menu bar.
+
+        :param player_names: A list of strings representing the names of the players.
+        :param board_size: An integer representing the size of the board.
+        """
+
         super().__init__()
 
         self.setWindowIcon(QIcon("./icons/pokeball.png"))
@@ -43,7 +70,13 @@ class Go(QMainWindow):
         self.set_player_turn(0)
 
     def init_ui(self):
-        """initiates application UI"""
+        """
+        Initiates the UI elements for the game.
+
+        This method sets up the layout of the game, including the board and score board, and sets the window style and
+        size.
+
+        """
 
         self.setStyleSheet("""
                             Go#Go{
@@ -67,10 +100,26 @@ class Go(QMainWindow):
 
         self.setWindowTitle('Go')
 
-    def get_initial_scores(self):
-        return [round((i != 0) * 7.5 / (2 ** (self.num_players - i - 1)), 2) for i in range(self.num_players)]
+    def get_initial_scores(self) -> list[float]:
+        """
+        Gets the initial scores for each player.
+
+        This method calculates and returns the initial scores for each player based on the number of players
+        in the game.
+
+
+        :return: A list of floats representing the initial scores for each player.
+
+        """
+        return [round((i != 0) * 7.5 / (2 ** (self.num_players - i - 1)), 1) for i in range(self.num_players)]
 
     def set_player_turn(self, player: int):
+        """
+        Sets the current player's turn and updates the UI to reflect the change.
+
+        :param player: An integer representing the index of the current player in the list of player names.
+        """
+
         if self.game_over:
             return
 
@@ -79,6 +128,11 @@ class Go(QMainWindow):
         self.board.set_player_turn(player)
 
     def next_turn(self):
+        """
+        Move to the next player's turn.
+
+        :return: None
+        """
         if self.game_over:
             return
         self.current_player = (self.current_player + 1) % self.num_players
@@ -86,6 +140,13 @@ class Go(QMainWindow):
         self.board.set_player_turn(self.current_player)
 
     def pass_turn(self):
+        """
+        Moves to the next turn if the game is not over.
+
+        This method increments the pass turn counter. If the counter equals the number of players, the game is finished.
+        Otherwise, the next turn is taken by calling the next_turn method.
+        """
+
         if self.game_over:
             return
 
@@ -99,11 +160,11 @@ class Go(QMainWindow):
 
     def make_move(self, piece):
         """
-        Makes a move on the board by placing the given piece for the current turns player.
+        Makes a move on the board by placing the given piece for the current turns' player.
 
         This method first checks if the move is valid. If the move is valid, it places the piece on the board, removes
         any enemy groups that have been captured, and updates the current player. If the move is not valid, it notifies
-        the user. TODO: change from printing error message to something in the UI
+        the user.
 
         :param piece: The piece to be placed on the board.
         """
@@ -147,6 +208,14 @@ class Go(QMainWindow):
         self.next_turn()
 
     def is_ko_situation(self, move_row, move_column):
+        """
+        Checks if the current move is a Ko situation.
+        A ko situation occurs when a player makes a move that causes the board to return to immediate a previous state.
+
+        :param move_row: The row of the current move.
+        :param move_column: The column of the current move.
+        :return: True if the current move is a ko situation, False otherwise.
+        """
 
         # Check if there has been a previous state, if not then it's not a ko situation
         if not self.undo_stack:
@@ -221,20 +290,15 @@ class Go(QMainWindow):
         self.set_player_turn(player)
 
     def finish_game(self):
-        self.game_over = True  # GAME OVER
+        self.game_over = True
 
         controlled_territories = self.board.get_controlled_territories()
-        winner = 0
+
         for player_number in range(self.num_players):
             self.players_scores[player_number] += len(controlled_territories[player_number + 1])
             self.score_board.update_player_capture(player_number, self.players_scores[player_number])
-            #
-            # if self.players_scores[winner - 1] < self.players_scores[player_number-1]:
-            #     winner = player_number
 
         self.score_board.display_winner(self.players_scores)
-
-        # TODO: Display game over message
 
     def to_dictionary(self) -> dict:
         """
@@ -402,57 +466,3 @@ class SpeedGo(Go):
         else:
             self.timerEvent(event)  # if we do not handle an event we should pass it to the super
             # class for handling
-
-
-class GameMenuBar(MenuBar):
-
-    def __init__(self, game_window: Go):
-        super().__init__(game_window)
-
-        # GAME MENU
-
-        # Reset Game Action
-        self.reset_game_action = QAction(QIcon("./icons/save.png"), "Reset Game", game_window)
-        self.reset_game_action.setShortcut("Ctrl+R")
-        self.reset_game_action.triggered.connect(game_window.reset_game)
-
-        # Save Game Action
-        self.save_game_action = QAction(QIcon("./icons/save.png"), "Save Game", game_window)
-        self.save_game_action.setShortcut("Ctrl+S")
-        self.save_game_action.triggered.connect(game_window.save_game)
-
-        # ACTIONS MENU
-
-        # Undo Action
-        self.undo_action = QAction(QIcon("./icons/save.png"), "Undo Move", game_window)
-        self.undo_action.setShortcut("Ctrl+Z")
-        self.undo_action.triggered.connect(game_window.undo_move)
-
-        # Redo Action
-        self.redo_action = QAction(QIcon("./icons/save.png"), "Redo Move", game_window)
-        self.redo_action.setShortcut("Ctrl+Y")
-        self.redo_action.triggered.connect(game_window.redo_move)
-
-    def init_menu(self):
-        # Add menus to menu bar
-        game_menu = self.addMenu("&Game")
-        actions_menu = self.addMenu("&Actions")
-        window_menu = self.addMenu("&Window")
-        help_menu = self.addMenu("&Help")
-
-        # Add actions to menus
-        game_menu.addAction(self.reset_game_action)
-        game_menu.addAction(self.new_game_action)
-        game_menu.addAction(self.save_game_action)
-        game_menu.addAction(self.load_game_action)
-        game_menu.addAction(self.exit_action)
-
-        actions_menu.addAction(self.undo_action)
-        actions_menu.addAction(self.redo_action)
-
-        window_menu.addAction(self.change_background_action)
-
-        help_menu.addAction(self.help_action)
-        help_menu.addAction(self.about_action)
-
-        return self

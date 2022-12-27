@@ -62,3 +62,57 @@ class MenuBar(QMenuBar):
         help_menu.addAction(self.about_action)
 
         return self
+
+
+class GameMenuBar(MenuBar):
+
+    def __init__(self, game_window):
+        super().__init__(game_window)
+
+        # GAME MENU
+
+        # Reset Game Action
+        self.reset_game_action = QAction(QIcon("./icons/save.png"), "Reset Game", game_window)
+        self.reset_game_action.setShortcut("Ctrl+R")
+        self.reset_game_action.triggered.connect(game_window.reset_game)
+
+        # Save Game Action
+        self.save_game_action = QAction(QIcon("./icons/save.png"), "Save Game", game_window)
+        self.save_game_action.setShortcut("Ctrl+S")
+        self.save_game_action.triggered.connect(game_window.save_game)
+
+        # ACTIONS MENU
+
+        # Undo Action
+        self.undo_action = QAction(QIcon("./icons/save.png"), "Undo Move", game_window)
+        self.undo_action.setShortcut("Ctrl+Z")
+        self.undo_action.triggered.connect(game_window.undo_move)
+
+        # Redo Action
+        self.redo_action = QAction(QIcon("./icons/save.png"), "Redo Move", game_window)
+        self.redo_action.setShortcut("Ctrl+Y")
+        self.redo_action.triggered.connect(game_window.redo_move)
+
+    def init_menu(self):
+        # Add menus to menu bar
+        game_menu = self.addMenu("&Game")
+        actions_menu = self.addMenu("&Actions")
+        window_menu = self.addMenu("&Window")
+        help_menu = self.addMenu("&Help")
+
+        # Add actions to menus
+        game_menu.addAction(self.reset_game_action)
+        game_menu.addAction(self.new_game_action)
+        game_menu.addAction(self.save_game_action)
+        game_menu.addAction(self.load_game_action)
+        game_menu.addAction(self.exit_action)
+
+        actions_menu.addAction(self.undo_action)
+        actions_menu.addAction(self.redo_action)
+
+        window_menu.addAction(self.change_background_action)
+
+        help_menu.addAction(self.help_action)
+        help_menu.addAction(self.about_action)
+
+        return self
