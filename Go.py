@@ -17,18 +17,9 @@ class Go(QMainWindow):
         super().__init__()
 
         self.setWindowIcon(QIcon("./icons/pokeball.png"))
-        # TODO write method set current player for this class
 
         # Set background color of WelcomeScreen
         self.setObjectName("Go")
-        # TODO: CHOOSE ONE FILE I PROVIDE 2
-        self.setStyleSheet("""
-                            Go#Go{
-                                background-image: url(./icons/go_background1.jpg);
-                                background-size: cover;
-                                background-position: bottom right;
-                                    }
-                            """)
 
         self.game_over = False
         self.num_players = len(player_names)
@@ -51,6 +42,14 @@ class Go(QMainWindow):
 
     def init_ui(self):
         """initiates application UI"""
+
+        self.setStyleSheet("""
+                            Go#Go{
+                                background-image: url(./icons/go_background1.jpg);
+                                background-size: cover;
+                                background-position: bottom right;
+                                    }
+                            """)
 
         main_widget = QWidget()
         self.setCentralWidget(main_widget)
