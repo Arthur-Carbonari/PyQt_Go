@@ -16,6 +16,7 @@ class Go(QMainWindow):
     def __init__(self, player_names: list[str], board_size: int):
         super().__init__()
 
+        self.setWindowIcon(QIcon("./icons/pokeball.png"))
         # TODO write method set current player for this class
 
         # Set background color of WelcomeScreen

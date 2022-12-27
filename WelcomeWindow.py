@@ -1,5 +1,5 @@
 from PyQt6.QtCore import Qt, QPoint
-from PyQt6.QtGui import QPainter, QPixmap, QFont
+from PyQt6.QtGui import QPainter, QPixmap, QFont, QIcon
 from PyQt6.QtWidgets import QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QFrame, QLineEdit, QMainWindow, \
     QRadioButton, QComboBox, QSpinBox, QButtonGroup
 
@@ -13,6 +13,7 @@ class WelcomeScreen(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        self.setWindowIcon(QIcon("./icons/pokeball.png"))
         main_widget = QFrame()
         # default number of players
         self.player_count = 2
