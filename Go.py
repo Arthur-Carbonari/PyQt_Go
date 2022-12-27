@@ -235,7 +235,11 @@ class Go(QMainWindow):
         """
         Convert the current game state to a dictionary.
 
-    def to_dictionary(self):
+        :return: A dictionary representation of the current game state, including
+            the game mode, game over status, player names and scores, current
+            player, pass turn counter, board size, and board array.
+        """
+
         return {
             "game_mode": self.GAME_MODE,
             "game_over": self.game_over,
@@ -248,6 +252,15 @@ class Go(QMainWindow):
         }
 
     def save_game(self):
+        """
+        Save the current game state to a pickle file.
+
+        This method opens a file save dialog to allow the user to select the
+        location and filename for the pickle file. It then converts the current
+        game state to a dictionary using the `to_dictionary` method and saves
+        the dictionary to the pickle file using the `pickle` module.
+        """
+
         filename, _ = QFileDialog.getSaveFileName(self, "Save File", "", "Pickle File (*.pkl)")
 
         game = self.to_dictionary()
