@@ -1,3 +1,6 @@
+import os
+import pickle
+
 from PyQt6.QtWidgets import QApplication, QMessageBox, QFileDialog
 import sys
 
@@ -68,10 +71,25 @@ class Main:
     def load_game(self):
         file_name, _ = QFileDialog.getOpenFileName(self.current_window, "Open File", "", "Pickle File (*.pkl)")
 
-        new_game = Go.load_game_from_file(file_name)
+        if not os.path.exists(file_name):
+            return None
+
+        with open(file_name, "rb") as f:
+            # Load the object from the file
+            game_object = pickle.load(f)
+
+        game_mode = game_object["game_mode"]
+
+        if not game_mode:
+            return
+
+        if game_mode == GameMode.SPEED:
+            new_game = SpeedGo.load_game_from_dictionary(game_object)
+        else:
+            new_game = Go.load_game_from_dictionary(game_object)
 
         if new_game is None:
-            print("Error while loading file, file missing or corrupted")
+            return
 
         self.change_current_window(new_game)
 
