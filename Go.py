@@ -62,7 +62,7 @@ class Go(QMainWindow):
     def pass_turn(self):
         self.pass_turn_counter += 1
 
-        if self.pass_turn_counter >= self.num_players:
+        if self.pass_turn_counter == self.num_players:
             self.finish_game()
             return
 
