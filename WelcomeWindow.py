@@ -21,7 +21,7 @@ class WelcomeScreen(QMainWindow):
 
         self.setMenuBar(MenuBar(self).init_menu())
         # Set window title
-        self.setWindowTitle("Welcome to Pokemon Go")
+        self.setWindowTitle("Pokemon Go")
 
         # Set background color of WelcomeScreen
         self.setObjectName("WelcomeScreen")
@@ -136,7 +136,7 @@ class WelcomeScreen(QMainWindow):
         self.player_spinbox.setMinimum(2)
         self.player_spinbox.setMaximum(4)
         # connect to set_number_of_players method
-        self.player_spinbox.valueChanged.connect(self.set_number_of_players)
+        self.player_spinbox.valueChanged.connect(self.change_number_of_players)
         # add combo box to line
         layout.addWidget(self.player_spinbox)
 
