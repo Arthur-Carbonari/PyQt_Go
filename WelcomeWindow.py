@@ -32,6 +32,8 @@ class WelcomeScreen(QMainWindow):
                             }
                             """)
 
+        main_widget.setStyleSheet("""background-color: rgba(0, 0, 0, 0.4);""")
+
         # items that will be used later
         self.player_spinbox = QSpinBox()                # number of players comboBox
         self.name_input_box = QVBoxLayout()             # player name box
