@@ -98,9 +98,32 @@ class Main:
 
     def show_help_dialog(self):
         print("Show help dialog")
+        dlg = QMessageBox(self.current_window)
+        dlg.setWindowTitle("Help")
+        dlg.setWindowModality(self.current_window.windowModality().NonModal)
+        dlg.setIcon(dlg.icon().Information)
+
+        dlg.setText("""
+                Click on board intersections to put a piece.
+                If you encircle a piece you capture it.
+                
+                You can't put a piece where every adjacent place surrounded.
+                
+                for more information about rules please visit:
+                    https://www.britgo.org/intro/intro2.html
+                """)
+        dlg.show()
 
     def show_about_dialog(self):
         print("Show about dialog")
+        dlg = QMessageBox(self.current_window)
+        dlg.setWindowTitle("About")
+        dlg.setWindowModality(self.current_window.windowModality().NonModal)
+        dlg.setIcon(dlg.icon().Information)
+
+        dlg.setText("A python go game by Arthur Carbonari Martins and Mert BEKAR")
+        dlg.setInformativeText("as HGP Group project 2022")
+        dlg.show()
 
     def exit(self):
         result = QMessageBox.question(self.current_window, "Exit Game?",
