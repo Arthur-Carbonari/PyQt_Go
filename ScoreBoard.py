@@ -7,24 +7,23 @@ from Piece import Piece
 class ScoreBoard(QWidget):
     """ base the score_board on a QLabel"""
 
-    def __init__(self, go, player_names):
-        super().__init__()
+    def __init__(self, go, players_names):
+        super().__init__(go)
 
-        self.go = go
         self.background = QPixmap("./icons/sb_background.png")
 
-        self.players_names = player_names
-        self.number_of_players = len(player_names)
+        self.number_of_players = len(players_names)
 
-        self.captured_pieces_labels = [QLabel("Captured Pieces: 0") for _ in self.players_names]
-        self.timer_labels = [QLabel("Time: --") for _ in self.players_names]
-
-        self.players_box = None
-        self.time_label = QLabel("Time Remaining: NA")
+        self.players_boxes = [PlayerBox(self, i, name) for i, name in enumerate(players_names)]
 
         self.undo_btn = QPushButton("Undo")
+        self.undo_btn.clicked.connect(go.undo_move)
+
         self.skip_btn = QPushButton("Skip")
+        self.skip_btn.clicked.connect(go.pass_turn)
+
         self.redo_btn = QPushButton("Redo")
+        self.redo_btn.clicked.connect(go.redo_move)
 
         self.init_ui()
 
@@ -32,51 +31,49 @@ class ScoreBoard(QWidget):
         """initiates ScoreBoard UI"""
 
         self.setStyleSheet("QGroupBox{border: 1px solid black;}")
+        self.setStyleSheet("""
+        background-color: rgba(0, 0, 0, 0.6);
+        color: white;
+        """)
 
-        # create a widget to hold other widgets
-        main_layout = QVBoxLayout(self)
+        wrapper_layout = QVBoxLayout(self)
+
+        main_group_box = QGroupBox(self)
+        main_layout = QVBoxLayout(main_group_box)
 
         # creating layouts
         # players layout
-        self.players_box = self.create_players_boxes()
+        players_box = self.create_players_boxes()
 
         # buttons line
         buttons_box = self.create_button_layout()
 
         # add all layouts to main layout
-        main_layout.addWidget(self.players_box)
-        main_layout.addLayout(buttons_box)
+        main_layout.addStretch(2)
+        main_layout.addWidget(players_box, 14)
+        main_layout.addStretch(1)
+        main_layout.addLayout(buttons_box, 1)
+        main_layout.addStretch(1)
+
+        wrapper_layout.addWidget(main_group_box)
+        wrapper_layout.setContentsMargins(0, 0, 0, 0)
+
+        self.setLayout(wrapper_layout)
 
     def create_players_boxes(self):
-        group_box = QGroupBox()
-        group_layout = QVBoxLayout()
-        group_box.setLayout(group_layout)
-        for player_no in range(len(self.players_names)):
-            # layout for player card and add it to group_layout
-            player_box = QGroupBox()
-            player_box_layout = QHBoxLayout()
-            player_box.setLayout(player_box_layout)
-            group_layout.addWidget(player_box)
+        group_box = QGroupBox(self)
 
-            # set icon for player
-            player_icon = QLabel()
-            player_icon.setPixmap(QIcon(Piece.piece_icons_paths[player_no + 1]).pixmap(64, 64))
+        player_boxes_layout = QVBoxLayout()
+        player_boxes_layout.addStretch(1)
+        [player_boxes_layout.addWidget(player_box) for player_box in self.players_boxes]
+        player_boxes_layout.addStretch(3)
 
-            # player information
-            player_info_layout = QVBoxLayout()
+        wrapper_layout = QHBoxLayout()
+        wrapper_layout.addStretch(1)
+        wrapper_layout.addLayout(player_boxes_layout, 20)
+        wrapper_layout.addStretch(1)
 
-            # player name
-            player_name = QLabel(self.players_names[player_no])
-            player_name.setFont(QFont("serif", 15))
-
-            player_info_layout.addStretch()
-            player_info_layout.addWidget(player_name)
-            player_info_layout.addWidget(self.captured_pieces_labels[player_no])
-            player_info_layout.addWidget(self.timer_labels[player_no])
-            player_info_layout.addStretch()
-
-            player_box_layout.addWidget(player_icon)
-            player_box_layout.addLayout(player_info_layout)
+        group_box.setLayout(wrapper_layout)
 
         return group_box
 
@@ -90,17 +87,7 @@ class ScoreBoard(QWidget):
         return buttons_line
 
     def reset(self):
-        self.captured_pieces_labels = [QLabel("Captured Pieces: 0") for _ in self.players_names]
-        self.timer_labels = [QLabel("Time: --") for _ in self.players_names]
-
-    def make_connection(self):
-        """this handles a signal sent from the board class"""
-        # initiate undo move method
-        self.undo_btn.clicked.connect(self.go.undo_move)
-        # initiate skip turn method
-        self.skip_btn.clicked.connect(self.go.pass_turn)
-        # initiate redo move method
-        self.redo_btn.clicked.connect(self.go.redo_move)
+        [player_box.reset() for player_box in self.players_boxes]
 
     def change_player(self, player_no):
         """changes current player"""
@@ -111,13 +98,65 @@ class ScoreBoard(QWidget):
         """paints the board and the pieces of the game"""
 
         painter = QPainter(self)
-        painter.setOpacity(0.5)
+        # painter.setOpacity(0.5)
         # Draws the board background
         self.background = self.background.scaled(self.width(), self.height())
         painter.drawPixmap(QPoint(), self.background)
 
     def update_player_capture(self, player_id: int, captured_pieces_total: int):
-        self.captured_pieces_labels[player_id - 1].setText("Captured Pieces: " + str(captured_pieces_total))
+        self.players_boxes[player_id - 1].set_captured_pieces_label(captured_pieces_total)
 
     def update_player_time(self, player_id: int, remaining_time: int):
-        self.timer_labels[player_id - 1].setText("Time: " + str(remaining_time))
+        self.players_boxes[player_id - 1].set_timer_label(remaining_time)
+
+    # EVENTS ====================================================
+
+    def resizeEvent(self, event) -> None:
+        self.setMaximumWidth(int(self.parent().width() * 0.35))
+
+
+class PlayerBox(QGroupBox):
+
+    def __init__(self, score_board, player_number, player_name="Default Name"):
+        super().__init__(score_board)
+
+        self.score_board = score_board
+
+        self.player_name_label = QLabel(player_name)
+        self.player_name_label.setFont(QFont("serif", 15))
+
+        self.captured_pieces_label = QLabel("Captured Pieces: 0")
+        self.timer_label = QLabel("Time: --")
+        self.player_icon = QLabel()
+        self.player_icon.setPixmap(QIcon(Piece.piece_icons_paths[player_number + 1]).pixmap(64, 64))
+        
+        self.init_ui()
+
+    def init_ui(self):
+        main_layout = QHBoxLayout(self)
+
+        main_layout.addWidget(self.player_icon)
+
+        info_layout = QVBoxLayout()
+
+        info_layout.addStretch()
+        info_layout.addWidget(self.player_name_label)
+        info_layout.addWidget(self.captured_pieces_label)
+        info_layout.addWidget(self.timer_label)
+        info_layout.addStretch()
+
+        main_layout.addLayout(info_layout)
+
+    def set_captured_pieces_label(self, captured_pieces: int):
+        self.captured_pieces_label.setText("Captured Pieces: " + str(captured_pieces))
+
+    def set_timer_label(self, time: int):
+        self.timer_label.setText("Time: " + str(time))
+
+    def reset(self):
+        self.captured_pieces_label = QLabel("Captured Pieces: 0")
+        self.timer_label = QLabel("Time: --")
+
+    def resizeEvent(self, event) -> None:
+        self.setMaximumHeight(int(self.parent().height() * 0.30))
+        # self.setMaximumWidth(300)
