@@ -26,6 +26,8 @@ class Go(QMainWindow):
         self.num_players = 2
         self.current_player = 1
 
+        self.players_captured_pieces = [0] * self.num_players
+
         self.pass_turn_counter = 0
 
         self.undo_stack = []
