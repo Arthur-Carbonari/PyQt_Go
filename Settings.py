@@ -24,7 +24,7 @@ class Settings:
         "#0000FF"
     ]
 
-    # TODO Find icons
+
     PIECE_ICONS_PATHS = [
         "./icons/empty.png",
         "icons/player_1_piece.png",
