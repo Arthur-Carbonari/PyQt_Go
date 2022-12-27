@@ -249,17 +249,47 @@ class Go(QMainWindow):
 
 
 class SpeedGo(Go):
+    GAME_MODE: GameMode = GameMode.SPEED
 
-    def __init__(self, players_names, board_size):
+    def __init__(self, players_names, board_size, remaining_time=None):
         super().__init__(players_names, board_size)
 
         self.timer = QBasicTimer()
-        self.remaining_time = [Settings.TIMER_START] * self.num_players
+
+        if remaining_time is None:
+            self.remaining_time = [Settings.TIMER_START] * self.num_players
+        else:
+            self.remaining_time = remaining_time
+
+        for player_number, time in enumerate(self.remaining_time):
+            self.score_board.update_player_time(player_number + 1, time)
+
         self.timer.start(Settings.TIMER_SPEED, self)
 
     def finish_game(self):
         self.timer.stop()
         super().finish_game()
+
+    def to_dictionary(self):
+        game = super(SpeedGo, self).to_dictionary()
+        game["remaining_time"] = self.remaining_time
+        return game
+
+    @staticmethod
+    def load_game_from_dictionary(game_object: dict):
+
+        # TODO sanitize the game dict to make sure it has all the properties and they are of valid types
+        speed_go = SpeedGo(game_object["players_names"], game_object["board_size"], game_object["remaining_time"])
+        speed_go.board.load_state(game_object["board_array"])
+        speed_go.set_score_board(game_object["players_scores"])
+        speed_go.current_player = game_object["current_player"]
+        speed_go.score_board.set_turn_player(speed_go.current_player)
+        speed_go.pass_turn_counter = game_object["pass_turn_counter"]
+
+        if game_object["game_over"]:
+            speed_go.finish_game()
+
+        return speed_go
 
     # EVENTS ================================================
 
