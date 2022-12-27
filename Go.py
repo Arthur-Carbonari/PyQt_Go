@@ -315,6 +315,17 @@ class SpeedGo(Go):
         self.timer.stop()
         super().finish_game()
 
+    def reset(self):
+        super().reset()
+
+        self.remaining_time[:] = [Settings.TIMER_START] * self.num_players
+
+        for player_number, time in enumerate(self.remaining_time):
+            self.score_board.update_player_time(player_number + 1, time)
+
+        if not self.timer.isActive():
+            self.timer.start(Settings.TIMER_SPEED, self)
+
     def to_dictionary(self):
         game = super(SpeedGo, self).to_dictionary()
         game["remaining_time"] = self.remaining_time
