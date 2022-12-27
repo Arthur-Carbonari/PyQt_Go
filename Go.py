@@ -2,7 +2,7 @@ import os.path
 import pickle
 
 from PyQt6.QtCore import pyqtSignal, QBasicTimer
-from PyQt6.QtGui import QAction, QIcon, QCursor
+from PyQt6.QtGui import QAction, QIcon, QCursor, QPixmap
 from PyQt6.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QMessageBox, QToolTip, QFileDialog
 from Board import Board
 from MenuBar import MenuBar
@@ -18,6 +18,16 @@ class Go(QMainWindow):
 
         # TODO write method set current player for this class
 
+        # Set background color of WelcomeScreen
+        self.setObjectName("Go")
+        # TODO: CHOOSE ONE FILE I PROVIDE 2
+        self.setStyleSheet("""
+                            Go#Go{
+                                background-image: url(./icons/go_background1.jpg);
+                                background-size: cover;
+                                background-position: bottom right;
+                                    }
+                            """)
         self.game_over = False
         self.num_players = len(player_names)
         self.players_names = player_names
