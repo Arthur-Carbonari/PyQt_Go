@@ -16,6 +16,8 @@ class Go(QMainWindow):
     def __init__(self, player_names: list[str], board_size: int):
         super().__init__()
 
+        # TODO write method set current player for this class
+
         self.game_over = False
         self.num_players = len(player_names)
         self.players_names = player_names
@@ -305,14 +307,15 @@ class SpeedGo(Go):
         # if the timer that has 'ticked' is the one in this class
         if event.timerId() == self.timer.timerId():
             if self.remaining_time[self.current_player - 1] == 0:
-                self.pass_turn()
                 return
 
             # update counter and timer label on scoreboard
             self.remaining_time[self.current_player - 1] -= 1
             self.score_board.update_player_time(self.current_player, self.remaining_time[self.current_player - 1])
-            # self.timer_labels[self.current_player].setText("Time: " + str(self.remaining_time[self.current_player]))
-            # self.set_time_remaining()
+
+            if self.remaining_time[self.current_player - 1] == 0:
+                self.pass_turn()
+                return
         else:
             self.timerEvent(event)  # if we do not handle an event we should pass it to the super
             # class for handling
