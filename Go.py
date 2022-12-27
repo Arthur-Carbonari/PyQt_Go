@@ -1,8 +1,7 @@
-import os.path
 import pickle
 
-from PyQt6.QtCore import pyqtSignal, QBasicTimer
-from PyQt6.QtGui import QAction, QIcon, QCursor, QPixmap
+from PyQt6.QtCore import QBasicTimer
+from PyQt6.QtGui import QAction, QIcon, QCursor
 from PyQt6.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QMessageBox, QToolTip, QFileDialog
 from Board import Board
 from MenuBar import MenuBar
@@ -127,7 +126,7 @@ class Go(QMainWindow):
             return
 
         # Add the board state at the beginning of the turn to the undo stack
-        self.undo_stack.append((board_before_move, self.current_player))
+        self.undo_stack.append((board_before_move, self.current_player, pieces_captured))
 
         # Empties the redo_stack if there was anything on there
         if self.redo_stack:
@@ -135,8 +134,7 @@ class Go(QMainWindow):
 
         # Updates the score board
         self.players_scores[self.current_player - 1] += pieces_captured
-        self.score_board.update_player_capture(self.current_player,
-                                               self.players_scores[self.current_player - 1])
+        self.score_board.update_player_capture(self.current_player, self.players_scores[self.current_player - 1])
 
         # Resets the pass turn counter
         self.pass_turn_counter = 0
@@ -184,12 +182,16 @@ class Go(QMainWindow):
         if not self.undo_stack:
             return
 
-        self.redo_stack.append((self.board.get_current_state(), self.current_player))
+        board_state, player, pieces_captured = self.undo_stack.pop()
 
-        board_state, player = self.undo_stack.pop()
+        self.redo_stack.append((self.board.get_current_state(), self.current_player, pieces_captured))
+
         self.board.load_state(board_state)
 
         self.set_player_turn(player)
+
+        self.players_scores[self.current_player - 1] -= pieces_captured
+        self.score_board.update_player_capture(self.current_player, self.players_scores[self.current_player - 1])
 
     def redo_move(self):
         """
@@ -202,10 +204,14 @@ class Go(QMainWindow):
         if not self.redo_stack:
             return
 
-        self.undo_stack.append((self.board.get_current_state(), self.current_player))
+        board_state, player, pieces_captured = self.redo_stack.pop()
 
-        board_state, player = self.redo_stack.pop()
+        self.undo_stack.append((self.board.get_current_state(), self.current_player, pieces_captured))
+
         self.board.load_state(board_state)
+
+        self.players_scores[self.current_player - 1] += pieces_captured
+        self.score_board.update_player_capture(self.current_player, self.players_scores[self.current_player - 1])
 
         self.set_player_turn(player)
 
