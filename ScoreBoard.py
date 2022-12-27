@@ -15,7 +15,6 @@ class ScoreBoard(QWidget):
 
         self.players_names = player_names
         self.number_of_players = len(player_names)
-        self.current_player = 0
 
         self.captured_pieces_labels = [QLabel("Captured Pieces: 0") for _ in self.players_names]
         self.timer_labels = [QLabel("Time: --") for _ in self.players_names]
@@ -91,9 +90,8 @@ class ScoreBoard(QWidget):
         return buttons_line
 
     def reset(self):
-        self.current_player = 0
-        self.remaining_time = [ScoreBoard.counter for _ in self.players_names]
-        self.captured_pieces = [0 for _ in self.players_names]
+        self.captured_pieces_labels = [QLabel("Captured Pieces: 0") for _ in self.players_names]
+        self.timer_labels = [QLabel("Time: --") for _ in self.players_names]
 
     def make_connection(self):
         """this handles a signal sent from the board class"""
@@ -106,7 +104,6 @@ class ScoreBoard(QWidget):
 
     def change_player(self, player_no):
         """changes current player"""
-        self.current_player = player_no
         # TODO: UPDATE WHEEL
 
     # EVENTS ===========================================
