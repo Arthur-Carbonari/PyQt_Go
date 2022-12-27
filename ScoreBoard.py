@@ -79,6 +79,7 @@ class ScoreBoard(QWidget):
 
     def reset(self):
         [player_box.reset() for player_box in self.players_boxes]
+        self.set_turn_player(1)
 
     def next_turn(self):
         last_turns_player = self.players_boxes_layout.itemAt(0).widget()
