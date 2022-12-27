@@ -224,9 +224,6 @@ class Go(QMainWindow):
         if self.undo_stack:
             self.board.reset()
 
-        # reset the score board
-        # self.score_board.reset()
-
         self.current_player = 1
         self.score_board.reset()
 
