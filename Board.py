@@ -127,20 +127,20 @@ class Board(QFrame):  # base the board on a QFrame widget
         test_piece.player = 0  # we reset the piece player to 0 after testing
         return False
 
-    def capture_surrounding_pieces(self, piece):
+    def capture_surrounding_pieces(self, piece) -> int:
+        pieces_captured = 0
 
         adjacent_enemy_groups = piece.get_adjacent_enemy_groups()
 
         enemy_group: set[Piece]
         for enemy_group in adjacent_enemy_groups:
-
-            # Gets the enemy test_piece group
-            print(enemy_group)
-
             enemy_group_liberty = sum([piece.get_liberties() for piece in enemy_group])
 
             if enemy_group_liberty == 0:
+                pieces_captured += len(enemy_group)
                 [self.place_piece(piece, 0) for piece in enemy_group]
+
+        return pieces_captured
 
     def print_piece_array(self):
 
