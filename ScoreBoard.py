@@ -164,7 +164,7 @@ class PlayerBox(QGroupBox):
         self.captured_pieces_label = QLabel("Captured Pieces: 0")
         self.timer_label = QLabel("Time: --")
         self.player_icon = QLabel()
-        self.player_icon.setPixmap(QIcon(Piece.piece_icons_paths[player_number + 1]).pixmap(64, 64))
+        self.player_icon.setPixmap(QIcon(Settings.PIECE_ICONS_PATHS[player_number + 1]).pixmap(64, 64))
         
         self.init_ui()
 

@@ -16,6 +16,23 @@ class Settings:
     TIMER_START = 10
     TIMER_SPEED = 1000
 
+    PIECE_COLORS = [
+        "#0000",
+        "#000",
+        "#fff",
+        "#8B0000",
+        "#0000FF"
+    ]
+
+    # TODO Find icons
+    PIECE_ICONS_PATHS = [
+        "./icons/empty.png",
+        "icons/player_1_piece.png",
+        "icons/player_2_piece.png",
+        "icons/player_2_piece.png",
+        "icons/player_2_piece.png"
+    ]
+
     # stylesheets ==================================
 
     CURRENT_PLAYER_STYLESHEET = """

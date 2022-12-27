@@ -2,16 +2,13 @@ from PyQt6.QtCore import QSize
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QPushButton, QSizePolicy
 
+from Settings import Settings
+
 
 class Piece(QPushButton):
     # NoPiece = 0
     # Black = 1
     # White = 2
-
-    piece_colors = ["#0000", "#000", "#fff"]
-    # TODO FIND ICONS
-    piece_icons_paths = ["./icons/empty.png", "icons/player_1_piece.png", "icons/player_2_piece.png",
-                         "icons/player_2_piece.png", "icons/player_2_piece.png"]
 
     def __init__(self, board, row, column):  # constructor
         super().__init__()
@@ -24,7 +21,7 @@ class Piece(QPushButton):
 
         self.setStyleSheet(f"border-radius: {self._get_border_radius()}%;")
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        self.setIcon(QIcon(Piece.piece_icons_paths[0]))
+        self.setIcon(QIcon(Settings.PIECE_ICONS_PATHS[0]))
 
         self.clicked.connect(self.click_piece)
 
@@ -43,10 +40,10 @@ class Piece(QPushButton):
 
     def place_piece(self, player):
         self.player = player
-        self.setIcon(QIcon(Piece.piece_icons_paths[player]))
+        self.setIcon(QIcon(Settings.PIECE_ICONS_PATHS[player]))
         self.setStyleSheet(f"""
                     border-radius: {self._get_border_radius()}%;
-                    background: {self.piece_colors[player]};
+                    background: {Settings.PIECE_COLORS[player]};
         """)
 
     def get_liberties(self):  # return Liberties
@@ -134,7 +131,7 @@ class Piece(QPushButton):
 
         self.setStyleSheet(f"""
                             border-radius: {self._get_border_radius()}%;
-                            background: {self.piece_colors[self.player]};
+                            background: {Settings.PIECE_COLORS[self.player]};
                 """)
 
     # TO STRING METHODS ===========================
