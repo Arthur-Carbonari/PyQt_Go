@@ -103,9 +103,9 @@ class Go(QMainWindow):
             self.redo_stack[:] = []
 
         # Updates the score board
-        self.players_captured_pieces[self.current_player - 1] += pieces_captured
+        self.players_scores[self.current_player - 1] += pieces_captured
         self.score_board.update_player_capture(self.current_player,
-                                               self.players_captured_pieces[self.current_player - 1])
+                                               self.players_scores[self.current_player - 1])
 
         # Resets the pass turn counter
         self.pass_turn_counter = 0
