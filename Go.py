@@ -266,6 +266,13 @@ class SpeedGo(Go):
 
         self.timer.start(Settings.TIMER_SPEED, self)
 
+    def next_turn(self):
+        # TODO test this
+        super(SpeedGo, self).next_turn()
+
+        if self.remaining_time[self.current_player - 1] <= 0:
+            self.pass_turn()
+
     def finish_game(self):
         self.timer.stop()
         super().finish_game()
