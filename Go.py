@@ -248,12 +248,22 @@ class Go(QMainWindow):
         if result == QMessageBox.StandardButton.No:
             return
 
-        # If this is false that means that no move has been made so no need to reset the board
-        if self.undo_stack:
-            self.board.reset()
+        self.reset()
 
-        self.set_player_turn(1)
+    def reset(self):
+        self.game_over = False
+        self.pass_turn_counter = 0
+        self.players_scores = [0] * self.num_players
+
+        self.undo_stack = []
+        self.redo_stack = []
+
+        self.board.reset()
+
         self.score_board.reset()
+
+        self.set_score_board(self.players_scores)
+        self.set_player_turn(1)
 
     def set_score_board(self, score):
         for player_number, captured_pieces in enumerate(score):
