@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QApplication, QMessageBox
+from PyQt6.QtWidgets import QApplication, QMessageBox, QFileDialog
 import sys
 
 from Go import Go
@@ -60,7 +60,14 @@ class Main:
         self.current_window.show()
 
     def load_game(self):
-        print("Load game object from saved games folder")
+        file_name, _ = QFileDialog.getOpenFileName(self.current_window, "Open File", "", "Pickle File (*.pkl)")
+
+        new_game = Go.load_game_from_file(file_name)
+
+        if new_game is None:
+            print("Error while loading file, file missing or corrupted")
+
+        self.change_current_window(new_game)
 
     def change_board_background(self):
         print("Change board background")
