@@ -7,11 +7,11 @@ from PyQt6.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QMessageBox, QToo
 from Board import Board
 from MenuBar import MenuBar
 from ScoreBoard import ScoreBoard
-from Settings import Settings
+from Settings import Settings, GameMode
 
 
 class Go(QMainWindow):
-    player_changed_signal = pyqtSignal(int)  # signal sent when player changed
+    GAME_MODE: GameMode = GameMode.NORMAL
 
     def __init__(self, player_names: list[str], board_size: int):
         super().__init__()
