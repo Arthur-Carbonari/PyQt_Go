@@ -1,8 +1,9 @@
 from PyQt6.QtWidgets import QApplication, QMessageBox, QFileDialog
 import sys
 
-from Go import Go
+from Go import Go, SpeedGo
 from MenuBar import MenuBar
+from Settings import Settings, GameMode
 from WelcomeWindow import WelcomeScreen
 
 
@@ -30,8 +31,13 @@ class Main:
             players_name.append(player_name)
 
         board_size = int(self.current_window.board_size_cbox.currentText())
+        game_mode = Settings.GAME_MODES[self.current_window.game_mode_selection.checkedId()]
 
-        go = Go(players_name, board_size)
+        if game_mode == GameMode.SPEED:
+            print("speed")
+            go = SpeedGo(players_name, board_size)
+        else:
+            go = Go(players_name, board_size)
 
         self.change_current_window(go)
 
