@@ -235,6 +235,10 @@ class Go(QMainWindow):
         self.current_player = 1
         self.score_board.reset()
 
+    def set_score_board(self, score):
+        for player_number, captured_pieces in enumerate(score):
+            self.score_board.update_player_capture(player_number + 1, captured_pieces)
+
     @staticmethod
     def load_game_from_file(file_name: str):
 
