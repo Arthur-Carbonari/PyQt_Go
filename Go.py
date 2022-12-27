@@ -299,6 +299,18 @@ class Go(QMainWindow):
 
         self.score_board.display_winner(self.players_scores)
 
+        winner = list(zip(self.players_names, self.players_scores))
+        winner.sort(key=lambda x: - x[1])
+
+        points = winner[0][1]
+        winner = winner[0][0]
+
+        dlg = QMessageBox(self)
+        dlg.setWindowTitle("What A Match")
+
+        dlg.setText("Game Over!\nAnd the winner is " + winner + " with " + str(points) + " Points.\nCongratulations")
+        dlg.show()
+
     def to_dictionary(self) -> dict:
         """
         Convert the current game state to a dictionary.
@@ -371,7 +383,6 @@ class Go(QMainWindow):
     @staticmethod
     def load_game_from_dictionary(game_object: dict):
 
-        # TODO sanitize the game dict to make sure it has all the properties and they are of valid types
         go = Go(game_object["players_names"], game_object["board_size"])
         go.board.load_state(game_object["board_array"])
         go.set_score_board(game_object["players_scores"])
@@ -404,7 +415,6 @@ class SpeedGo(Go):
         self.timer.start(Settings.TIMER_SPEED, self)
 
     def next_turn(self):
-        # TODO test this
         super(SpeedGo, self).next_turn()
 
         if self.remaining_time[self.current_player] <= 0:
@@ -433,7 +443,6 @@ class SpeedGo(Go):
     @staticmethod
     def load_game_from_dictionary(game_object: dict):
 
-        # TODO sanitize the game dict to make sure it has all the properties and they are of valid types
         speed_go = SpeedGo(game_object["players_names"], game_object["board_size"], game_object["remaining_time"])
         speed_go.board.load_state(game_object["board_array"])
         speed_go.set_score_board(game_object["players_scores"])
