@@ -5,6 +5,7 @@ from PyQt6.QtCore import Qt, pyqtSignal, QPoint
 from PyQt6.QtGui import QPainter, QPen, QPixmap
 # from PyQt6.QtTest import QTest
 from Piece import Piece
+from Settings import Settings
 
 
 class Board(QFrame):  # base the board on a QFrame widget
@@ -69,6 +70,13 @@ class Board(QFrame):  # base the board on a QFrame widget
 
     def get_current_state(self):
         return copy.deepcopy(self.board_array)
+
+    def set_player_turn(self, player_number):
+        self.setStyleSheet(f"""
+                QPushButton#free:hover{{
+                                        border: 2px solid {Settings.PIECE_COLORS[player_number]}; 
+                                    }}     
+                """)
 
     def is_move_valid(self, row, column, player):
         """

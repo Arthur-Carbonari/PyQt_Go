@@ -24,7 +24,8 @@ class Go(QMainWindow):
         self.num_players = len(player_names)
         self.players_names = player_names
         self.players_scores = self.get_initial_scores()
-        self.current_player = 1
+
+        self.current_player = 0
         self.pass_turn_counter = 0
 
         self.board = Board(self, board_size)
@@ -38,6 +39,8 @@ class Go(QMainWindow):
         self.setMenuBar(GameMenuBar(self).init_menu())
 
         self.init_ui()
+
+        self.set_player_turn(1)
 
     def init_ui(self):
         """initiates application UI"""
@@ -73,6 +76,7 @@ class Go(QMainWindow):
 
         self.current_player = player
         self.score_board.set_turn_player(player)
+        self.board.set_player_turn(player)
 
     def next_turn(self):
         if self.game_over:
@@ -80,6 +84,7 @@ class Go(QMainWindow):
 
         self.current_player = (self.current_player % self.num_players) + 1
         self.score_board.next_turn()
+        self.board.set_player_turn(self.current_player)
 
     def pass_turn(self):
         if self.game_over:

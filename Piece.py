@@ -19,7 +19,12 @@ class Piece(QPushButton):
         self.row = row
         self.column = column
 
-        self.setStyleSheet(f"border-radius: {self._get_border_radius()}%;")
+        self.setObjectName("free")
+
+        self.setStyleSheet(f"""
+        border-radius: {self._get_border_radius()}%;
+        """)
+
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.setIcon(QIcon(Settings.PIECE_ICONS_PATHS[0]))
 
@@ -45,6 +50,11 @@ class Piece(QPushButton):
                     border-radius: {self._get_border_radius()}%;
                     background: {Settings.PIECE_COLORS[player]};
         """)
+
+        if player == 0:
+            self.setObjectName("free")
+        else:
+            self.setObjectName("")
 
     def get_liberties(self):  # return Liberties
         liberty = 0
@@ -130,8 +140,11 @@ class Piece(QPushButton):
         self.setIconSize(QSize(self.height(), self.width()))
 
         self.setStyleSheet(f"""
-                            border-radius: {self._get_border_radius()}%;
-                            background: {Settings.PIECE_COLORS[self.player]};
+                            QPushButton{{
+                                background: {Settings.PIECE_COLORS[self.player]};
+                                border-radius: {self._get_border_radius()}%;
+                            
+                            }}          
                 """)
 
     # TO STRING METHODS ===========================
