@@ -189,7 +189,13 @@ class Go(QMainWindow):
         print("game over")
         # TODO: Calculate final points by territory
         # TODO: Display game over message
-        self.score_board.highlight_winner(1)
+        controlled_territories = self.board.get_controlled_territories()
+        winner = 0
+        for i in range(1, self.num_players+1):
+            print("player ", i, ": ", len(controlled_territories[i]))
+            if winner < len(controlled_territories[i]):
+                winner = i
+        self.score_board.highlight_winner(winner)
 
     def to_dictionary(self):
         return {
