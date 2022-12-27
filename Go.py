@@ -194,17 +194,22 @@ class Go(QMainWindow):
         # TODO: Display game over message
         self.score_board.highlight_winner(1)
 
-    def save_game(self):
-        filename, _ = QFileDialog.getSaveFileName(self, "Save File", "", "Pickle File (*.pkl)")
-
-        print(filename)
-
-        game = {
-            "players_name": self.players_names,
+    def to_dictionary(self):
+        return {
+            "game_mode": self.GAME_MODE,
+            "game_over": self.game_over,
+            "players_names": self.players_names,
+            "players_scores": self.players_scores,
             "current_player": self.current_player,
+            "pass_turn_counter": self.pass_turn_counter,
             "board_size": self.board.board_size,
             "board_array": self.board.board_array,
         }
+
+    def save_game(self):
+        filename, _ = QFileDialog.getSaveFileName(self, "Save File", "", "Pickle File (*.pkl)")
+
+        game = self.to_dictionary()
 
         with open(filename, "wb",) as file:
             pickle.dump(game, file)
