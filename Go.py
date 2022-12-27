@@ -1,18 +1,19 @@
 import os.path
 import pickle
 
-from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtCore import pyqtSignal, QBasicTimer
 from PyQt6.QtGui import QAction, QIcon, QCursor
 from PyQt6.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QMessageBox, QToolTip, QFileDialog
 from Board import Board
 from MenuBar import MenuBar
 from ScoreBoard import ScoreBoard
+from Settings import Settings
 
 
 class Go(QMainWindow):
     player_changed_signal = pyqtSignal(int)  # signal sent when player changed
 
-    def __init__(self, player_names, board_size):
+    def __init__(self, player_names: list[str], board_size: int):
         super().__init__()
 
         # TODO: also if timed mode is deactivated count upwards to see how long to make move
@@ -21,9 +22,9 @@ class Go(QMainWindow):
 
         self.players_names = player_names
 
-        self.score_board = ScoreBoard(self, player_names)
         self.board = Board(self, board_size)
-        self.num_players = 2
+        self.score_board = ScoreBoard(self, player_names)
+        self.num_players = len(player_names)
         self.current_player = 1
 
         self.players_captured_pieces = [0] * self.num_players
@@ -37,9 +38,6 @@ class Go(QMainWindow):
 
         self.init_ui()
 
-    def get_score_board(self):
-        return self.score_board
-
     def init_ui(self):
         """initiates application UI"""
 
@@ -50,7 +48,7 @@ class Go(QMainWindow):
         main_layout.addWidget(self.board, 9)
         main_layout.addWidget(self.score_board, 2)
 
-        self.score_board.make_connection(self.board)
+        self.score_board.make_connection()
 
         screen = self.screen().availableGeometry()
 
