@@ -63,10 +63,16 @@ class Go(QMainWindow):
         self.setWindowTitle('Go')
 
     def next_turn(self):
+        if self.game_over:
+            return
+
         self.current_player = (self.current_player % self.num_players) + 1
         self.score_board.next_turn()
 
     def pass_turn(self):
+        if self.game_over:
+            return
+
         self.pass_turn_counter += 1
 
         if self.pass_turn_counter == self.num_players:
