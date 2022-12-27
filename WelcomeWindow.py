@@ -23,7 +23,6 @@ class WelcomeScreen(QMainWindow):
 
         # Set background color of WelcomeScreen
         self.setObjectName("WelcomeScreen")
-        self.background = QPixmap("./icons/welcome_background.jpg")
         self.setStyleSheet("""
                             WelcomeScreen#WelcomeScreen{
                                 background-image: url(./icons/welcome_background.png);
@@ -197,11 +196,3 @@ class WelcomeScreen(QMainWindow):
         self.player_count = int(self.player_spinbox.value())
         self.add_name_input_lines()
 
-    # EVENTS
-    # def paintEvent(self, event):
-    #     """paints the board and the pieces of the game"""
-    #
-    #     painter = QPainter(self)
-    #     # Draws the board background
-    #     self.background = self.background.scaled(self.width(), self.height())
-    #     painter.drawPixmap(QPoint(), self.background)
