@@ -17,11 +17,12 @@ class ScoreBoard(QWidget):
         self.go = go
         self.background = QPixmap("./icons/sb_background.png")
 
-        self.players = player_names
+        self.players_names = player_names
+        self.number_of_players = len(player_names)
         self.current_player = 0
 
-        # TODO: waiting for captured pieces logic
-        self.captured_pieces = [0 for _ in self.players]
+        self.captured_pieces_labels = [QLabel("Captured Pieces: 0") for _ in self.players_names]
+        self.timer_labels = [QLabel("Time: --") for _ in self.players_names]
 
         self.players_box = None
         self.time_label = QLabel("Time Remaining: NA")
@@ -55,7 +56,7 @@ class ScoreBoard(QWidget):
         group_box = QGroupBox()
         group_layout = QVBoxLayout()
         group_box.setLayout(group_layout)
-        for player_no in range(len(self.players)):
+        for player_no in range(len(self.players_names)):
             # layout for player card and add it to group_layout
             player_box = QGroupBox()
             player_box_layout = QHBoxLayout()
@@ -64,22 +65,18 @@ class ScoreBoard(QWidget):
 
             # set icon for player
             player_icon = QLabel()
-            player_icon.setPixmap(QIcon(Piece.piece_icons_paths[player_no+1]).pixmap(64, 64))
+            player_icon.setPixmap(QIcon(Piece.piece_icons_paths[player_no + 1]).pixmap(64, 64))
 
             # player information
             player_info_layout = QVBoxLayout()
+
             # player name
-            player_name = QLabel(self.players[player_no])
+            player_name = QLabel(self.players_names[player_no])
             player_name.setFont(QFont("serif", 15))
-            # captured pieces by player
-            captured_pieces = QLabel("Pieces: " + str(self.captured_pieces[player_no]))
-            # timer for player
-            player_timer = self.remaining_time[player_no]
-            self.timer_labels[player_no].setText("Time: " + str(player_timer))
 
             player_info_layout.addStretch()
             player_info_layout.addWidget(player_name)
-            player_info_layout.addWidget(captured_pieces)
+            player_info_layout.addWidget(self.captured_pieces_labels[player_no])
             player_info_layout.addWidget(self.timer_labels[player_no])
             player_info_layout.addStretch()
 
