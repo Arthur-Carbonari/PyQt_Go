@@ -187,16 +187,14 @@ class WelcomeScreen(QMainWindow):
 
         # clear list
         self.name_input_fields.clear()
-    def set_number_of_players(self):
-        """sets current player with change of dropbox"""
-        # player name count
+
+    def change_number_of_players(self):
+        """
+        Adds or removes inputs field for player names from the welcome window form
+        """
         self.delete_name_input_lines()
-        self.player_count = int(self.sender().value())
+        self.player_count = int(self.player_spinbox.value())
         self.add_name_input_lines()
-        # TODO delete
-        # mode
-        # if self.sender().isChecked():
-        #     print(self.sender().value)
 
     # EVENTS
     def paintEvent(self, event):
