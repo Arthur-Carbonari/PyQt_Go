@@ -78,7 +78,7 @@ class ScoreBoard(QWidget):
 
     def reset(self):
         [player_box.reset() for player_box in self.players_boxes]
-        self.set_turn_player(1)
+        self.set_turn_player(0)
 
     def next_turn(self):
         last_turns_player = self.players_boxes_layout.itemAt(0).widget()
@@ -90,20 +90,14 @@ class ScoreBoard(QWidget):
 
     def set_turn_player(self, player_number: int):
         """changes current player"""
-        player_index = player_number - 1
         self.players_boxes_layout.itemAt(0).widget().setStyleSheet("")
 
         [self.players_boxes_layout.removeWidget(player_box) for player_box in self.players_boxes_layout.children()]
 
-        new_player_order = self.players_boxes[player_index:] + self.players_boxes[:player_index]
+        new_player_order = self.players_boxes[player_number:] + self.players_boxes[:player_number]
         [self.players_boxes_layout.addWidget(player_box) for player_box in new_player_order]
 
         new_player_order[0].setStyleSheet(Settings.CURRENT_PLAYER_STYLESHEET)
-
-        # effect = QGraphicsDropShadowEffect()
-        # effect.setColor(QColor(255, 255, 0))  # Set the color to yellow
-        # effect.setBlurRadius(10)  # Set the intensity of the glow
-        # first_widget.setGraphicsEffect(effect)
 
     def display_winner(self, final_score: list[float]):
 
@@ -146,10 +140,10 @@ class ScoreBoard(QWidget):
         painter.drawPixmap(QPoint(), self.background)
 
     def update_player_capture(self, player_id: int, captured_pieces_total: int):
-        self.players_boxes[player_id - 1].set_captured_pieces_label(captured_pieces_total)
+        self.players_boxes[player_id].set_captured_pieces_label(captured_pieces_total)
 
     def update_player_time(self, player_id: int, remaining_time: int):
-        self.players_boxes[player_id - 1].set_timer_label(remaining_time)
+        self.players_boxes[player_id].set_timer_label(remaining_time)
 
     # EVENTS ====================================================
 

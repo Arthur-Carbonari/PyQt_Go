@@ -8,10 +8,21 @@ from Piece import Piece
 from Settings import Settings
 
 
-class Board(QFrame):  # base the board on a QFrame widget
-    click_location_signal = pyqtSignal(str)  # signal sent when there is a new click location
+class Board(QFrame):
 
     def __init__(self, go, board_size=16):
+        """
+        The constructor of the Board class.
+
+        This method initializes the Board object with the given go parent widget and board_size parameter. It also sets up the
+        board by creating the board_array and pieces_array data structures, creating a pieces_layout for the board and
+        populating it with Piece objects. Finally, it connects each Piece object to its adjacent pieces and calls the
+        init_board method.
+
+        :param go: The parent object of the board.
+        :param board_size: The number of rows/columns in the board.
+        """
+
         super().__init__(go)
 
         self.go = go
@@ -41,38 +52,43 @@ class Board(QFrame):  # base the board on a QFrame widget
 
         [[piece.connect_to_adjacent() for piece in piece_row] for piece_row in self.pieces_array]
 
-        self.init_board()
-
-    def init_board(self):
-        """initiates board"""
-        self.print_board_array()
-
     def print_board_array(self):
         """prints the board_array to the terminal in an attractive way"""
 
         print("board_array:")
         print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in self.board_array]))
 
-    def mouse_pos_to_col_row(self, event):
-        """convert the mouse click event to a row and column"""
-
-    def square_size(self):
-        """returns the side size of one square in the board"""
+    def square_size(self) -> int:
+        """
+        Calculates the side size of one square in the board.
+        :return: side size of one square in the board
+        """
 
         return int(self.contentsRect().width() / (self.board_size + 1))
 
     def reset(self):
-        """clears pieces from the board"""
+        """Clears pieces from the board"""
 
-        [[self.place_piece(piece, 0) for piece in piece_row] for piece_row in self.pieces_array]
+        [[self.reset_piece(piece) for piece in piece_row] for piece_row in self.pieces_array]
 
-    def get_current_state(self):
+    def get_current_state(self) -> list[list[int]]:
+        """
+        get_current_state: returns the current state of the board as a 2D array of integers
+
+        :return: 2D array of integers representing the current state of the board
+        """
+
         return copy.deepcopy(self.board_array)
 
     def set_player_turn(self, player_number):
+        """
+        Changes the style of the board to reflect the current player's turn.
+        :param player_number: The index of the current player in the list of players.
+        """
+
         self.setStyleSheet(f"""
                 QPushButton#free:hover{{
-                                        border: 2px solid {Settings.PIECE_COLORS[player_number]}; 
+                                        border: 2px solid {Settings.PIECE_COLORS[player_number + 1]}; 
                                     }}     
                 """)
 
@@ -103,7 +119,7 @@ class Board(QFrame):  # base the board on a QFrame widget
                 return True
 
         # Check if the move will result in self capture of the group, if it does not its valid
-        test_piece.player = player  # Easiest way of doing this is by setting the test_piece temporarily
+        test_piece.player = (player + 1)  # Easiest way of doing this is by setting the test_piece temporarily
 
         group_liberty = sum([piece.get_liberties() for piece in test_piece.get_group()])
         if group_liberty > 0:
@@ -133,7 +149,7 @@ class Board(QFrame):  # base the board on a QFrame widget
 
             if enemy_group_liberty == 0:
                 pieces_captured += len(enemy_group)
-                [self.place_piece(piece, 0) for piece in enemy_group]
+                [self.reset_piece(piece) for piece in enemy_group]
 
         return pieces_captured
 
@@ -146,12 +162,16 @@ class Board(QFrame):  # base the board on a QFrame widget
                 print(piece.player, end="\t")
             print()
 
-    def place_piece(self, piece, player):
+    def place_piece(self, piece: Piece, player: int):
         # change reference in board_array
-        self.board_array[piece.row][piece.column] = player
+        self.board_array[piece.row][piece.column] = player + 1
 
         # place the test_piece
-        piece.place_piece(player)
+        piece.place_piece(player + 1)
+
+    def reset_piece(self, piece: Piece):
+        self.board_array[piece.row][piece.column] = 0
+        piece.place_piece(0)
 
     def draw_board_squares(self, painter: QPainter):
         """draw all the square on the board"""

@@ -17,6 +17,7 @@ class Settings:
 
     BOARD_SIZES = ["16", "13", "9", "7"]
     board_background = "./icons/board_background.jpg"
+    WELCOME_BACKGROUND = "./icons/welcome_background.png"
 
     PIECE_COLORS = [
         "#0000",

@@ -40,7 +40,7 @@ class Go(QMainWindow):
 
         self.init_ui()
 
-        self.set_player_turn(1)
+        self.set_player_turn(0)
 
     def init_ui(self):
         """initiates application UI"""
@@ -81,8 +81,7 @@ class Go(QMainWindow):
     def next_turn(self):
         if self.game_over:
             return
-
-        self.current_player = (self.current_player % self.num_players) + 1
+        self.current_player = (self.current_player + 1) % self.num_players
         self.score_board.next_turn()
         self.board.set_player_turn(self.current_player)
 
@@ -119,6 +118,7 @@ class Go(QMainWindow):
             QToolTip.showText(QCursor.pos(), "Invalid Move: Self capture is not allowed")
             return
 
+        print("current player", self.current_player)
         self.board.place_piece(piece, self.current_player)
 
         pieces_captured = self.board.capture_surrounding_pieces(piece)
@@ -138,8 +138,8 @@ class Go(QMainWindow):
             self.redo_stack[:] = []
 
         # Updates the score board
-        self.players_scores[self.current_player - 1] += pieces_captured
-        self.score_board.update_player_capture(self.current_player, self.players_scores[self.current_player - 1])
+        self.players_scores[self.current_player] += pieces_captured
+        self.score_board.update_player_capture(self.current_player, self.players_scores[self.current_player])
 
         # Resets the pass turn counter
         self.pass_turn_counter = 0
@@ -195,8 +195,8 @@ class Go(QMainWindow):
 
         self.set_player_turn(player)
 
-        self.players_scores[self.current_player - 1] -= pieces_captured
-        self.score_board.update_player_capture(self.current_player, self.players_scores[self.current_player - 1])
+        self.players_scores[self.current_player] -= pieces_captured
+        self.score_board.update_player_capture(self.current_player, self.players_scores[self.current_player])
 
     def redo_move(self):
         """
@@ -215,8 +215,8 @@ class Go(QMainWindow):
 
         self.board.load_state(board_state)
 
-        self.players_scores[self.current_player - 1] += pieces_captured
-        self.score_board.update_player_capture(self.current_player, self.players_scores[self.current_player - 1])
+        self.players_scores[self.current_player] += pieces_captured
+        self.score_board.update_player_capture(self.current_player, self.players_scores[self.current_player])
 
         self.set_player_turn(player)
 
@@ -225,9 +225,9 @@ class Go(QMainWindow):
 
         controlled_territories = self.board.get_controlled_territories()
         winner = 0
-        for player_number in range(1, self.num_players+1):
-            self.players_scores[player_number - 1] += len(controlled_territories[player_number])
-            self.score_board.update_player_capture(player_number, self.players_scores[player_number - 1])
+        for player_number in range(self.num_players):
+            self.players_scores[player_number] += len(controlled_territories[player_number + 1])
+            self.score_board.update_player_capture(player_number, self.players_scores[player_number])
             #
             # if self.players_scores[winner - 1] < self.players_scores[player_number-1]:
             #     winner = player_number
@@ -299,11 +299,11 @@ class Go(QMainWindow):
         self.score_board.reset()
 
         self.set_score_board(self.players_scores)
-        self.set_player_turn(1)
+        self.set_player_turn(0)
 
     def set_score_board(self, score):
         for player_number, captured_pieces in enumerate(score):
-            self.score_board.update_player_capture(player_number + 1, captured_pieces)
+            self.score_board.update_player_capture(player_number, captured_pieces)
 
     @staticmethod
     def load_game_from_dictionary(game_object: dict):
@@ -336,7 +336,7 @@ class SpeedGo(Go):
             self.remaining_time = remaining_time
 
         for player_number, time in enumerate(self.remaining_time):
-            self.score_board.update_player_time(player_number + 1, time)
+            self.score_board.update_player_time(player_number, time)
 
         self.timer.start(Settings.TIMER_SPEED, self)
 
@@ -344,7 +344,7 @@ class SpeedGo(Go):
         # TODO test this
         super(SpeedGo, self).next_turn()
 
-        if self.remaining_time[self.current_player - 1] <= 0:
+        if self.remaining_time[self.current_player] <= 0:
             self.pass_turn()
 
     def finish_game(self):
@@ -357,7 +357,7 @@ class SpeedGo(Go):
         self.remaining_time[:] = [Settings.TIMER_START] * self.num_players
 
         for player_number, time in enumerate(self.remaining_time):
-            self.score_board.update_player_time(player_number + 1, time)
+            self.score_board.update_player_time(player_number, time)
 
         if not self.timer.isActive():
             self.timer.start(Settings.TIMER_SPEED, self)
@@ -389,14 +389,14 @@ class SpeedGo(Go):
         """this event is automatically called when the timer is updated. based on the timer_speed variable """
         # if the timer that has 'ticked' is the one in this class
         if event.timerId() == self.timer.timerId():
-            if self.remaining_time[self.current_player - 1] == 0:
+            if self.remaining_time[self.current_player] == 0:
                 return
 
             # update counter and timer label on scoreboard
-            self.remaining_time[self.current_player - 1] -= 1
-            self.score_board.update_player_time(self.current_player, self.remaining_time[self.current_player - 1])
+            self.remaining_time[self.current_player] -= 1
+            self.score_board.update_player_time(self.current_player, self.remaining_time[self.current_player])
 
-            if self.remaining_time[self.current_player - 1] == 0:
+            if self.remaining_time[self.current_player] == 0:
                 self.pass_turn()
                 return
         else:
