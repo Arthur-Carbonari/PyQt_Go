@@ -19,10 +19,6 @@ class ScoreBoard(QWidget):
 
         self.players = player_names
         self.current_player = 0
-        self.timer = QBasicTimer()
-        self.timer_labels = [QLabel() for _ in self.players]
-        self.remaining_time = [ScoreBoard.counter for _ in self.players]
-        self.remaining_time[0] += 1   # for delaying timer because when app loading player misses secs
 
         # TODO: waiting for captured pieces logic
         self.captured_pieces = [0 for _ in self.players]
@@ -101,15 +97,10 @@ class ScoreBoard(QWidget):
         buttons_line.addStretch()
         return buttons_line
 
-    def start(self):
-        self.timer.start(self.timer_speed, self) # start the correct timer with the correct speed
-
     def reset(self):
         self.current_player = 0
-        self.remaining_time = [ScoreBoard.counter for _ in self.players]
-        self.remaining_time[0] += 1  # for delaying timer because when app loading player misses secs
-        self.captured_pieces = [0 for _ in self.players]
-
+        self.remaining_time = [ScoreBoard.counter for _ in self.players_names]
+        self.captured_pieces = [0 for _ in self.players_names]
 
     def make_connection(self, board):
         """this handles a signal sent from the board class"""
@@ -159,22 +150,3 @@ class ScoreBoard(QWidget):
         self.background = self.background.scaled(self.width(), self.height())
         painter.drawPixmap(QPoint(), self.background)
 
-    def timerEvent(self, event):
-        """this event is automatically called when the timer is updated. based on the timer_speed variable """
-        # TODO adapt this code to handle your timers to different modes
-        # if the timer that has 'ticked' is the one in this class
-        if event.timerId() == self.timer.timerId():
-            if self.go.is_timed_mode_on and self.remaining_time[self.current_player] == 0:
-                self.go.finish_game()
-                self.eliminate_player()
-                self.timer.stop()
-                print("Game over")
-                return  # For stop counting down
-            # update counter and timer label on scoreboard
-            self.remaining_time[self.current_player] -= 1
-            self.timer_labels[self.current_player].setText("Time: " + str(self.remaining_time[self.current_player]))
-            # self.set_time_remaining()
-            print('timerEvent()', self.remaining_time)
-        else:
-            self.go.timerEvent(event)  # if we do not handle an event we should pass it to the super
-            # class for handling
