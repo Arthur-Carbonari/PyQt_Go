@@ -160,7 +160,6 @@ class Board(QFrame):  # base the board on a QFrame widget
         xy_position: int
 
         for i in range(1, self.board_size + 1):
-
             xy_position = square_width * i
 
             # draws the rows
@@ -189,6 +188,94 @@ class Board(QFrame):  # base the board on a QFrame widget
                 self.pieces_array[row][column].place_piece(value)
 
         self.board_array = board_state
+
+    def get_controlled_territories(self):
+        """Find the owners and the territories of the whole board"""
+
+        territories = {player_no + 1: set()
+                       for player_no in range(self.go.num_players)}
+
+        # for each space in board
+        for x in range(self.board_size):
+            for y in range(self.board_size):
+                # if area is empty return area with player that controls it
+                if self.board_array[x][y] == 0 and (x, y) not in set().union(*territories.values()):
+                    owner, terr = self.territory(x, y)
+                    if owner and terr:
+                        territories[owner] = territories[owner].union(terr)
+
+        return territories
+
+    def territory(self, x, y):
+        """Find the owner of given space in board"""
+
+        def valid_space(x2, y2):
+            return 0 <= x2 < self.board_size and 0 <= y2 < self.board_size
+
+        def grow_territory(x1, y1):
+            """if space is not already in set: add space to set and control adjacent spaces"""
+            nonlocal territory
+            # if territory already has the space return
+            if (x1, y1) in territory:
+                return
+            # add space to set
+            territory.add((x1, y1))
+            # for every adjacent space
+            for n in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
+                x2 = x1 + n[0]
+                y2 = y1 + n[1]
+                # control if space is valid and empty
+                if valid_space(x2, y2) and self.board_array[x2][y2] == 0:
+                    grow_territory(x2, y2)
+
+        # if space isn't empty return
+        if self.board_array[x][y] != 0:
+            return 0, set()
+
+        # check the y-axis upwards
+        for y1 in range(y - 1, -1, -1):
+            # if space is not empty break
+            if self.board_array[x][y1] != 0:
+                owner = self.board_array[x][y1]
+                break
+        # if loop did not encounter a break
+        else:
+            # check y-axis downwards
+            for y1 in range(y + 1, self.board_size):
+                if self.board_array[x][y1] != 0:
+                    owner = self.board_array[x][y1]
+                    break
+            # if loop did not encounter a break
+            else:
+                # check x-axis to right side
+                for x1 in range(x + 1, self.board_size):
+                    owner = self.board_array[x1][y]
+                    break
+                    # if loop did not encounter a break
+                else:
+                    for x1 in range(x - 1, -1, -1):
+                        owner = self.board_array[x1][y]
+                        break
+                        # if loop did not encounter a break
+                    else:
+                        owner = 0
+
+        territory = set()
+        grow_territory(x, y)
+        try:
+            for space in territory:
+                # for every adjacent space in territory
+                for n in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
+                    xt = space[0] + n[0]
+                    yt = space[1] + n[1]
+                    # if adjacent space has enemy piece
+                    if valid_space(xt, yt) and self.board_array[xt][yt] not in [owner, 0]:  # Bounded by enemy
+                        owner = 0
+                        raise StopIteration
+        except StopIteration:
+            pass
+
+        return owner, territory
 
     # EVENTS ===========================================
 
