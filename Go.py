@@ -202,6 +202,23 @@ class Go(QMainWindow):
         self.current_player = 1
         self.score_board.reset()
 
+    @staticmethod
+    def load_game_from_file(file_name: str):
+
+        if not os.path.exists(file_name):
+            return None
+
+        with open(file_name, "rb") as f:
+            # Load the object from the file
+            game = pickle.load(f)
+
+        # TODO sanitize the game dict to make sure it has all the properties and they are of valid types
+        go = Go(game["players_name"], game["board_size"])
+        go.current_player = game["current_player"]
+        go.board.load_state(game["board_array"])
+
+        return go
+
 
 class GameMenuBar(MenuBar):
 
